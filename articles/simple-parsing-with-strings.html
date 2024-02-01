@@ -1,0 +1,126 @@
+<!DOCTYPE html><html><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.css" /><link rel="stylesheet" href="/static/css/style.css" /><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css" crossorigin="anonymous" /><title>Enhanced Simple Parsing for Scala | Jamie Talking about Code</title><meta name="description" content="Describes a new string interpolator for Scala that can be used for simple parsing of structured data." /><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/styles/default.min.css" /><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css" /><script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js" type="text/javascript"></script><link rel="stylesheet" href="/static/css/admonition.css" /></head><body class="d-flex flex-column min-vh-100"><nav class="navbar navbar-expand-md navbar-light fixed-top bg-light"><div class="container-fluid"><a class="navbar-brand" href="/">Jamie Talking about Code</a><button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button><div class="collapse navbar-collapse" id="navbarSupportedContent"><ul class="navbar-nav me-auto mb-2 mb-lg-0"><li class="nav-item"><a class="nav-link" href="/about/index.html">About</a></li><li class="nav-item"><a class="nav-link active" aria-current="page" href="/articles/index.html">Articles</a></li></ul></div></div></nav><div class="container"><div class="row"><div class="col-lg-4"><div class="bio-box jumbotron sidebar shadow py-lg-4 py-3 bio-box__top"><div class="bio-main"><table><tr><td class="bio-left"><div class="bio-photo"><img src="/static/img/profile.jpg" alt="photo of Jamie Talking about Code" class="img-avatar" /></div></td><td class="bio-right"><p><span class="bio-name">Jamie Thompson</span></p></td></tr></table><ul class="list-inline"><li class="list-inline-item"><p class="text-center mb-1"><small><a href="https://github.com/bishabosha" class="bio-link" rel="me"><i class="fa-brands fa-github fa-lg"></i><br />GitHub</a></small></p></li><li class="list-inline-item"><p class="text-center mb-1"><small><a href="https://twitter.com/bishabosha" class="bio-link" rel="me"><i class="fa-brands fa-twitter fa-lg"></i><br />Twitter</a></small></p></li><li class="list-inline-item"><p class="text-center mb-1"><small><a href="https://www.linkedin.com/in/james-thompson-3b1ba076/" class="bio-link" rel="me"><i class="fa-brands fa-linkedin fa-lg"></i><br />LinkedIn</a></small></p></li><li class="list-inline-item"><p class="text-center mb-1"><small><a href="https://fosstodon.org/@jrthompson" class="bio-link" rel="me"><i class="fa-brands fa-mastodon fa-lg"></i><br />Mastodon</a></small></p></li><li class="list-inline-item"><p class="text-center mb-1"><small><a href="/static/pages/james-thompson-cv.html" class="bio-link"><i class="fa-solid fa-file fa-lg"></i><br />Resume</a></small></p></li></ul><div class="d-none d-sm-none d-lg-block"><hr /><div class="bio-body bio-expand" tabindex="0"><p>I love to share ideas about programming, whether it is though speaking,
+producing video tutorials, or engaging in the learning process to deliver the best materials for newcomers.</p>
+<p>As a software engineer, my passions are programming language design, and making types work for you.</p>
+<p>I currently work at the <a href="https://scala.epfl.ch" target="_blank">Scala Center</a> on the Scala 2 and 3 compilers,
+Scala's documentation, and TASTy Query.</p>
+</div></div></div></div><div class="sticky-top top-aligned jumbotron sidebar shadow py-lg-4 py-3"><nav class="toc-nav"><ol class="list-unstyled"><li class="toc-level-1"><a href="#enhanced-simple-parsing-for-scala.html">Enhanced Simple Parsing for Scala</a></li><li class="toc-level-2"><a href="#an-example-problem">An Example Problem</a></li><li class="toc-level-2"><a href="#parsing-it-with-scala">Parsing it with Scala</a></li><li class="toc-level-3"><a href="#show-me-the-use-case">Show me the use case!</a></li><li class="toc-level-2"><a href="#what-else-can-you-do">What else can you do?</a></li><li class="toc-level-2"><a href="#whats-next">What's next?</a></li></ol></nav></div></div><div class="col-lg-8"><div class="jumbotron bg-light py-lg-5 py-3"><article><h1 id="enhanced-simple-parsing-for-scala.html" class="display-5 anchor-link__source">Enhanced Simple Parsing for Scala</h1><ul class="list-inline mb-2"><li class="list-inline-item"><small><span class="text-muted">Thursday, 1 February 2024</span></small></li><li class="list-inline-item"><small><i class="fa-solid fa-hourglass-start"></i> 4 minute read</small></li><li class="list-inline-item"><small><a href="/articles/"><i class="fa-solid fa-angle-up"></i> all articles</a></small></li></ul><hr /><div class="container mb-2"><div class="row"><div class="col d-flex"><small><a href="/articles/the-beginning.html"><i class="fa-solid fa-angle-left"></i> How to write a website generator in Scala, Part 1</a></small></div><div class="col d-flex flex-row-reverse"></div></div></div><div><p>I developed a new String interpolator for Advent of Code to help with parsing - it turns out that I didn't need anything else for solving all this years problems.</p>
+<h2><a href="#an-example-problem" id="an-example-problem" class="anchor-link anchor-link__source"><i class="fa-solid fa-link"></i></a>An Example Problem</h2>
+<p><a href="https://www.adventofcode.com">Advent of Code</a> is a yearly challenge, giving a small programming puzzle each day through December. Typically you need to read some text input into a suitable data structure for processing. The twist being that each day has some brand new unique format (not anything typical such as CSV, JSON, etc).</p>
+<p>Take this example, similar to Day 2 of 2023:</p>
+<pre><code class="language-text">Game 1: 1 gold, 2 pink, 6 aqua; 9 aqua, 5 gold; 2 pink
+Game 2: 1 aqua, 2 pink; 1 pink, 1 aqua; 9 pink, 5 aqua, 1 gold
+Game 3: 5 aqua, 5 gold, 21 pink; 8 pink, 6 aqua, 22 gold; 5 pink, 1 gold
+</code></pre>
+<p>What you can see is that each row is quite regular, following the following format:</p>
+<pre><code class="language-text">Game %d: %{%{%d %s}...(, )}...(; )
+</code></pre>
+<p>i.e. each row starts with <code>&quot;Game %d: &quot;</code>, where <code>%d</code> is a placeholder for an integer,
+followed by a sequence of substrings. Each substring is separated by <code>&quot;; &quot;</code>, e.g. for Game 1 we have the sequence <code>&quot;1 gold, 2 pink, 6 aqua&quot;</code>, <code>&quot;9 aqua, 5 gold&quot;</code>, <code>&quot;2 pink&quot;</code>.</p>
+<p>Each substring, such as <code>&quot;9 aqua, 5 gold&quot;</code> is described by the nested format string:</p>
+<pre><code class="language-text">%{%d %s}...(, )
+</code></pre>
+<p>i.e. another sequence of substrings, each separated by <code>&quot;, &quot;</code>, e.g. <code>&quot;9 aqua&quot;</code>, <code>&quot;5 gold&quot;</code>. Each of those nested substrings, such as <code>&quot;9 aqua&quot;</code>, is then described by the format</p>
+<pre><code class="language-text">%d %s
+</code></pre>
+<p>where again <code>%d</code> is an integer (e.g. <code>9</code>) and <code>%s</code> is an arbitrary string (e.g. <code>&quot;aqua&quot;</code>).</p>
+<h2><a href="#parsing-it-with-scala" id="parsing-it-with-scala" class="anchor-link anchor-link__source"><i class="fa-solid fa-link"></i></a>Parsing it with Scala</h2>
+<p>The reason why I used such a specific format to describe the text input, is that I made my own String interpolator that understands the same format. It's called <code>r</code>, and is based on the existing <code>s</code> pattern interpolator, (see implementation <a href="https://github.com/bishabosha/advent-of-code-2023/blob/main/regexglob.scala">here</a>).</p>
+<p>I gave it enhancements so that you can to apply a format to each globbed element, and extract a typed value matching that format.
+It can even match sequences of strings (arbitrarily nested) that share the same format.</p>
+<h3><a href="#show-me-the-use-case" id="show-me-the-use-case" class="anchor-link anchor-link__source"><i class="fa-solid fa-link"></i></a>Show me the use case!</h3>
+<p>Using <code>r</code>, one line of input from the above problem can be parsed with the following snippet of code:</p>
+<pre><code class="language-scala">val r&quot;Game $id%d: ${r&quot;${r&quot;$countss%d $namess&quot;}...(, )&quot;}...(; )&quot; = line
+</code></pre>
+<p>Let's break down what's happening here:</p>
+<p>if we assume <code>line</code> is the String</p>
+<pre><code class="language-text">Game 1: 1 gold, 2 pink, 6 aqua; 9 aqua, 5 gold; 2 pink
+</code></pre>
+<p>then we will be left with the following extracted values:</p>
+<pre><code class="language-scala">val id: Int = 1
+val countss: Seq[Seq[Int]] = Seq(Seq(1, 2, 6), Seq(9, 5), Seq(2))
+val namess: Seq[Seq[String]] = Seq(Seq(&quot;gold&quot;, &quot;pink&quot;, &quot;aqua&quot;), Seq(&quot;aqua&quot;, &quot;gold&quot;), Seq(&quot;pink&quot;))
+</code></pre>
+<p>Now we should probably pack these into a sensible data structure, e.g.</p>
+<pre><code class="language-scala">case class Game(id: Int, hands: Seq[Seq[(Int, String)]])
+
+Game(id, countss.zip(namess).map(_.zip(_)))
+
+// Game(1,Seq(Seq((1,gold), (2,pink), (6,aqua)), Seq((9,aqua), (5,gold)), Seq((2,pink))))
+</code></pre>
+<p>This is the structure I used to finish <a href="https://github.com/bishabosha/advent-of-code-2023/blob/main/2023-day02.scala">solving Day 2</a>.</p>
+<p><strong>Bonus round</strong></p>
+<p>In fact, instead of parsing line by line, the whole input can be captured in a single extractor:</p>
+<pre><code class="language-scala">val r&quot;${r&quot;Game $ids%d: ${r&quot;${r&quot;$countsss%d $namesss&quot;}...(, )&quot;}...(; )&quot;}...(\n)&quot; = line
+</code></pre>
+<p>however this requires one more level of zipping which I think obscures the code too much.</p>
+<p>You can see more usages of the interpolator in my Advent of Code solutions:</p>
+<ul>
+<li><a href="https://github.com/bishabosha/advent-of-code-2023/blob/main/2023-day04.scala">Day 04</a></li>
+<li><a href="https://github.com/bishabosha/advent-of-code-2023/blob/main/2023-day05.scala">Day 05</a></li>
+<li><a href="https://github.com/bishabosha/advent-of-code-2023/blob/main/2023-day06.scala">Day 06</a></li>
+<li><a href="https://github.com/bishabosha/advent-of-code-2023/blob/main/2023-day19.scala">Day 19</a></li>
+</ul>
+<h2><a href="#what-else-can-you-do" id="what-else-can-you-do" class="anchor-link anchor-link__source"><i class="fa-solid fa-link"></i></a>What else can you do?</h2>
+<table class="article-table">
+<thead>
+<tr><th>Format</th><th>Binding</th><th>Note</th></tr>
+</thead>
+<tbody>
+<tr><td><code>$foo</code></td><td><code>foo: String</code></td><td> </td></tr>
+<tr><td><code>$foo%d</code></td><td><code>foo: Int</code></td><td> </td></tr>
+<tr><td><code>$foo%L</code></td><td><code>foo: Long</code></td><td> </td></tr>
+<tr><td><code>$foo%f</code></td><td><code>foo: Float</code></td><td> </td></tr>
+<tr><td><code>$foo%g</code></td><td><code>foo: Double</code></td><td> </td></tr>
+<tr><td><code>$foo...(&lt;regex&gt;)</code></td><td><code>foo: Seq[String]</code></td><td>split by regex</td></tr>
+<tr><td><code>$foo..!(&lt;regex&gt;)</code></td><td><code>foo: Seq[String]</code></td><td>drops first if empty</td></tr>
+<tr><td><code>${r&quot;$foo%d&quot;}...(&lt;regex&gt;)</code></td><td><code>foo: Seq[Int]</code></td><td>match on each element</td></tr>
+<tr><td><code>${r&quot;$foo%L&quot;}...(&lt;regex&gt;)</code></td><td><code>foo: Seq[Long]</code></td><td>match on each element</td></tr>
+<tr><td><code>${r&quot;$foo%f&quot;}...(&lt;regex&gt;)</code></td><td><code>foo: Seq[Float]</code></td><td>match on each element</td></tr>
+<tr><td><code>${r&quot;$foo%g&quot;}...(&lt;regex&gt;)</code></td><td><code>foo: Seq[Double]</code></td><td>match on each element</td></tr>
+</tbody>
+</table>
+<blockquote>
+<p><em>The above table gives an enumeration of all the possible format suffixes.</em></p>
+</blockquote>
+<p>In essence, the behavior of the extractor can be interpreted by the following rewrites:</p>
+<p><strong>1. simple format string</strong></p>
+<pre><code class="language-scala">&quot;23 * 2&quot; match
+  case r&quot;$x%d * $y%d&quot; =&gt; assert(x * y == 46)
+</code></pre>
+<p>is converted to</p>
+<pre><code class="language-scala">&quot;23&quot; match
+  case s&quot;$x * $y&quot; =&gt; (x.toIntOption, y.toIntOption) match
+    case (Some(x), Some(y)) =&gt; assert(x * y == 46)
+</code></pre>
+<p><strong>2. split format</strong></p>
+<pre><code class="language-scala">&quot;2,3,4&quot; match
+  case r&quot;${r&quot;$xs%d&quot;}...(,)&quot; =&gt; assert(xs.product == 24)
+</code></pre>
+<p>is converted to</p>
+<pre><code class="language-scala">&quot;2,3,4&quot; match
+  case s&quot;$sub&quot; =&gt;
+    sub.split(&quot;,&quot;).toIndexedSeq match
+      case r&quot;$xs%d&quot; =&gt; assert(xs.product == 24)
+</code></pre>
+<p>which is further converted to</p>
+<pre><code class="language-scala">&quot;2,3,4&quot; match
+  case s&quot;$sub&quot; =&gt;
+    val xs: Seq[Int] = sub.split(&quot;,&quot;).toIndexedSeq.map:
+      case r&quot;$x%d&quot; =&gt; x
+    assert(xs.product == 24)
+</code></pre>
+<p>which (by <strong>rule 1</strong>) is finally converted to</p>
+<pre><code class="language-scala">&quot;2,3,4&quot; match
+  case s&quot;$sub&quot; =&gt;
+    val xs: Seq[Int] = sub.split(&quot;,&quot;).toIndexedSeq.map:
+      case s&quot;$x&quot; =&gt; x.toIntOption match
+        case Some(x) =&gt; x
+    assert(xs.product == 24)
+</code></pre>
+<blockquote>
+<p>it's a bit simplified for reading but the real thing is well behaved such that patterns that do not match return an empty value from the unapply method (rather than throwing MatchError).</p>
+</blockquote>
+<h2><a href="#whats-next" id="whats-next" class="anchor-link anchor-link__source"><i class="fa-solid fa-link"></i></a>What's next?</h2>
+<p>I'm thinking of polishing the extractor a bit more before publishing as a library. I'd like to propose it for the Scala standard library, or perhaps <a href="https://github.com/scala/toolkit">Scala Toolkit</a>, accepting any feedback or simplifications suggested.</p>
+<p>But the purpose is to continue to be a lightweight parsing solution, to compliment the <code>s</code> interpolator by adding a bit more convenience, enough for typical problems in interview-style questions. However serious parsing problems will need an even more powerful solution, such as a parser combinator library.</p>
+</div><div class="container mb-2"><div class="row"><div class="col d-flex"><small><a href="/articles/the-beginning.html"><i class="fa-solid fa-angle-left"></i> How to write a website generator in Scala, Part 1</a></small></div><div class="col d-flex flex-row-reverse"></div></div></div></article></div></div></div></div><footer class="mt-auto"><div class="footer-copyright text-center py-3"><small>© 2024 Jamie Thompson.<span class="text-muted"> Last published 01/02/2024</span></small></div></footer><script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script><script src="/static/js/nav-toc.js" type="text/javascript"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/highlight.min.js" type="text/javascript"></script><script src="/static/js/hljs-scala3.js" type="text/javascript"></script><script src="/static/js/hljs.js" type="text/javascript"></script><script src="/static/js/katex-render.js" type="text/javascript"></script><script src="/static/js/admonition.js" type="text/javascript"></script></body></html>
