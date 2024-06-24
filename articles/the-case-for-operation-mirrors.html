@@ -1,0 +1,209 @@
+<!DOCTYPE html><html><head><meta charset="utf-8" /><meta name="Content-Type" content="text/html; charset=utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.css" /><link rel="stylesheet" href="/static/css/style.css" /><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css" crossorigin="anonymous" /><title>Just declare your services: Introducing operation mirrors | Jamie Talking about Code</title><meta name="description" content="" /><meta name="twitter:card" content="summary" /><meta name="og:title" content="Just declare your services: Introducing operation mirrors | Jamie Talking about Code" /><meta name="og:description" content="" /><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/styles/default.min.css" /><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css" /><script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js" type="text/javascript"></script><link rel="stylesheet" href="/static/css/admonition.css" /></head><body class="d-flex flex-column min-vh-100"><nav class="navbar navbar-expand-md navbar-light fixed-top bg-light"><div class="container-fluid"><a class="navbar-brand" href="/">Jamie Talking about Code</a><button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button><div class="collapse navbar-collapse" id="navbarSupportedContent"><ul class="navbar-nav me-auto mb-2 mb-lg-0"><li class="nav-item"><a class="nav-link" href="/about/index.html">About</a></li><li class="nav-item"><a class="nav-link active" aria-current="page" href="/articles/index.html">Articles</a></li><li class="nav-item"><a class="nav-link" href="/talks/index.html">Talks</a></li></ul></div></div></nav><div class="container"><div class="row"><div class="col-lg-4"><div class="bio-box jumbotron sidebar shadow py-lg-4 py-3 bio-box__top"><div class="bio-main"><table><tr><td class="bio-left"><div class="bio-photo"><img src="/static/img/profile.jpg" alt="photo of Jamie Talking about Code" class="img-avatar" /></div></td><td class="bio-right"><p><span class="bio-name">Jamie Thompson</span></p></td></tr></table><ul class="list-inline"><li class="list-inline-item"><p class="text-center mb-1"><small><a href="https://github.com/bishabosha" class="bio-link" rel="me"><i class="fa-brands fa-github fa-lg"></i><br />GitHub</a></small></p></li><li class="list-inline-item"><p class="text-center mb-1"><small><a href="https://twitter.com/bishabosha" class="bio-link" rel="me"><i class="fa-brands fa-twitter fa-lg"></i><br />Twitter</a></small></p></li><li class="list-inline-item"><p class="text-center mb-1"><small><a href="https://www.linkedin.com/in/james-richard-thompson/" class="bio-link" rel="me"><i class="fa-brands fa-linkedin fa-lg"></i><br />LinkedIn</a></small></p></li><li class="list-inline-item"><p class="text-center mb-1"><small><a href="https://fosstodon.org/@jrthompson" class="bio-link" rel="me"><i class="fa-brands fa-mastodon fa-lg"></i><br />Mastodon</a></small></p></li><li class="list-inline-item"><p class="text-center mb-1"><small><a href="/static/pages/JamesThompsonCV2024.html" class="bio-link"><i class="fa-solid fa-file fa-lg"></i><br />Resume</a></small></p></li></ul><div class="d-none d-sm-none d-lg-block"><hr /><div class="bio-body bio-expand" tabindex="0"><p>Currently working on Scala CLI, and compile performance at the <a href="https://scala.epfl.ch" target="_blank">Scala Center</a>.</p>
+<p>I love to share ideas about programming, whether it is though speaking,
+producing video tutorials, or engaging in the learning process to deliver the best materials for newcomers.</p>
+<p>As a software engineer, my passions are programming language design, and simplifying APIs.</p>
+</div></div></div></div><div class="sticky-top top-aligned jumbotron sidebar shadow py-lg-4 py-3"><nav class="toc-nav"><ol class="list-unstyled"><li class="toc-level-1"><a href="#just-declare-your-services:-introducing-operation-mirrors.html">Just declare your services: Introducing operation mirrors</a></li><li class="toc-level-2"><a href="#a-motivating-example">A motivating example</a></li><li class="toc-level-2"><a href="#the-need-for-ops-mirror">The need for ops-mirror</a></li><li class="toc-level-2"><a href="#type-safe-endpoints-using-ops-mirror">Type-safe endpoints using ops-mirror</a></li><li class="toc-level-2"><a href="#other-uses-for-ops-mirror">Other uses for ops-mirror</a></li><li class="toc-level-2"><a href="#what-about-effect-tracking">What about Effect tracking?</a></li><li class="toc-level-2"><a href="#a-call-to-action">A Call to Action</a></li></ol></nav></div></div><div class="col-lg-8"><div class="jumbotron bg-light py-lg-5 py-3"><article><h1 id="just-declare-your-services:-introducing-operation-mirrors.html" class="display-5 anchor-link__source">Just declare your services: Introducing operation mirrors</h1><ul class="list-inline mb-2"><li class="list-inline-item"><small><span class="text-muted">Monday, 24 June 2024</span></small></li><li class="list-inline-item"><small><i class="fa-solid fa-hourglass-start"></i> 7 minute read</small></li><li class="list-inline-item"><small><a href="/articles/"><i class="fa-solid fa-angle-up"></i> all articles</a></small></li></ul><hr /><div class="container mb-2"><div class="row"><div class="col d-flex"><small><a href="/articles/simple-parsing-with-strings.html"><i class="fa-solid fa-angle-left"></i> Enhanced Simple Parsing for Scala</a></small></div><div class="col d-flex flex-row-reverse"></div></div></div><div><p>Scala 3 makes it even easier to write expressive code that feels like it belongs in a dynamic language, but stays aggressively type-safe, improving your productivity. Towards this style, I'm introducing <a href="https://github.com/bishabosha/ops-mirror">ops-mirror</a>, a micro-library for reflection of method signatures, for example to generate schemas for HTTP endpoints from trait definitions.</p>
+<blockquote>
+<p>As of publishing, version 0.1.2 is available for Scala 3.3 LTS on JVM, JS, and Native.</p>
+<pre><code class="language-scala">//&gt; using dep io.github.bishabosha::ops-mirror::0.1.2
+
+import mirrorops.OpsMirror
+</code></pre>
+</blockquote>
+<p>One of Scala 3's greatest strengths is the new metaprogramming system.
+Even though it is very powerful, you don't need to be a genius to get started with it. In my talk <a href="https://www.youtube.com/watch?v=zYl117VzSGA">&quot;Mirrors for operations, not data&quot;</a>, from Scalar 2024, I explained how to get started using the new <a href="https://docs.scala-lang.org/scala3/reference/contextual/derivation.html">automatic type-class derivation</a> mechanism in Scala 3. I noted a limitation however, which is that the compiler only provides reflection support (via the <a href="https://docs.scala-lang.org/scala3/reference/contextual/derivation.html#mirror-1">Mirror</a> typeclass) for sum/product types. I believe that we can extend this reflection support to interface types, which is provided by the <a href="https://github.com/bishabosha/ops-mirror">ops-mirror</a> micro-library. It seems to be a natural extension - so far inpiring other libraries to be released such as <a href="https://github.com/neandertech/smithy4s-deriving">smithy4s-deriving</a>.</p>
+<h2><a href="#a-motivating-example" id="a-motivating-example" class="anchor-link anchor-link__source"><i class="fa-solid fa-link"></i></a>A motivating example</h2>
+<p>It can be hard to keep track of API changes in web services, and to ensure that servers and clients don't fall out of sync.</p>
+<p>A common solution to this problem is to describe the API as a set of endpoints, using pure data. A single endpoint is a schema of the expected input/output data, and any metadata necessary to describe the endpoint (such as the HTTP method, path, and query parameters).</p>
+<p>In Scala, there are many libraries that help you do this. For example, via an embedded DSL (see <a href="https://tapir.softwaremill.com/en/latest/">tapir</a>, <a href="https://endpoints4s.github.io">endpoints4s</a>, <a href="https://github.com/zio/zio-http">zio-http</a>).
+Other solutions use code generation from another source language, such as <a href="https://disneystreaming.github.io/smithy4s/">Smithy4s</a>.</p>
+<p>There are some downsides to these solutions: e.g. a DSL may be less straightforward for beginners; and code generation requires extra support from a build tool, which might not be practical.</p>
+<p>As a hopefully simpler solution, I propose to avoid all the ceremony and bring back <em>plain traits + annotations</em>, and with the help of ops-mirror generate endpoints from this source of truth.</p>
+<p>So here is a simple definition of a service to greet people with a custom message (<a href="https://github.com/bishabosha/ops-mirror/blob/main/examples/GreetService.scala">try it out</a>):</p>
+<pre><code class="language-scala">@failsWith[HttpError]
+trait GreetService derives HttpService:
+
+  @get(&quot;/greet/{name}&quot;)
+  def greet(@path name: String): String
+
+  @post(&quot;/greet/{name}&quot;)
+  def setGreeting(@path name: String, @body greeting: String): Unit
+
+end GreetService
+</code></pre>
+<p>It looks highly readable, and should be familiar to a beginner. A <strong>method</strong> is 1:1 with an endpoint, with <strong>inputs</strong> and <strong>outputs</strong>. A trait collects several endpoints into a a <strong>service</strong>. Annotations describe the metadata associated with either a whole service, an individual endpoint, or an input of that endpoint.</p>
+<p>Here is what a like to define server handlers and create a simple client, sticking to a <a href="https://odersky.github.io/blog/2024-04-11-post.html">Lean Scala</a> style (again <a href="https://github.com/bishabosha/ops-mirror/blob/main/examples/GreetService.scala">try it out</a>):</p>
+<pre><code class="language-scala">val e = HttpService.endpoints[GreetService]
+
+@main def server =
+  val greetings = concurrent.TrieMap.empty[String, String]
+
+  val server = ServerBuilder()
+    .addEndpoint:
+        e.greet.handle: name =&gt;
+            Right(s&quot;${greetings.getOrElse(name, &quot;Hello&quot;)}, $name&quot;))
+    .addEndpoint:
+        e.setGreeting.handle: (name, greeting) =&gt;
+            Right(greetings(name) = greeting)
+    .create(port = 8080)
+
+  sys.addShutdownHook(server.close())
+end server
+
+@main def client(who: String, newGreeting: String) =
+  val baseUrl = &quot;http://localhost:8080&quot;
+
+  val greetRequest = PartialRequest(e.greet, baseUrl)
+    .prepare(who)
+
+  val setGreetingRequest = PartialRequest(e.setGreeting, baseUrl)
+    .prepare(who, newGreeting)
+
+  either:
+      val init = greetRequest.send().?
+      setGreetingRequest.send().?
+      val updated = greetRequest.send().?
+      println(s&quot;greeting for $who was: $init, now is: $updated&quot;)
+end client
+</code></pre>
+<blockquote>
+<p>It should be noted that the code above, while works, is optimised for demo-purposes, and is not production-ready. I would recommend for example to instead generate <a href="https://tapir.softwaremill.com/en/latest/">tapir</a> endpoints (<em>help wanted!</em>), and let that do the heavy lifting for you.</p>
+</blockquote>
+<h2><a href="#the-need-for-ops-mirror" id="the-need-for-ops-mirror" class="anchor-link anchor-link__source"><i class="fa-solid fa-link"></i></a>The need for ops-mirror</h2>
+<p>Now you have seen the end-result, naturally you may ask how do we get to this point?</p>
+<p>In the example above <code>HttpService</code> is a typeclass that provides a <code>Route</code> schema for each method of <code>GreetService</code>.</p>
+<pre><code class="language-scala">trait HttpService[T]:
+  val routes: Map[String, Route]
+</code></pre>
+<p>Each <code>Route</code> schema describes the metadata of an endpoint, such as the HTTP method, path, and the source of each parameter.</p>
+<p>in the companion of <code>HttpService</code> we have the <code>derived</code> method as follows:</p>
+<pre><code class="language-scala">import mirrorops.OpsMirror
+
+object HttpService:
+  inline def derived[T](using OpsMirror.Of[T]): HttpService[T] = ???
+</code></pre>
+<p>With this signature, for any trait type <code>T</code>, a value of type <code>OpsMirror.Of[T]</code> will be synthesized, providing a data structure that reflects the metadata and signature of each method of <code>T</code>.</p>
+<p>This is the information we want from <code>GreetService</code> in order to generate <code>routes</code>:</p>
+<blockquote>
+<p><code>GreetService</code> is a trait where:</p>
+<ul>
+<li>each method may error with <code>HttpError</code></li>
+<li>method <code>greet</code> returns <code>String</code>,
+<ul>
+<li>with annotation <code>@get(&quot;/greet/{name}&quot;)</code></li>
+<li>with param <code>name</code> of type <code>String</code>
+<ul>
+<li>with annotation <code>@path</code></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>method <code>setGreeting</code> returns <code>Unit</code>,
+<ul>
+<li>with annotation <code>@post(&quot;/greet/{name}&quot;)</code></li>
+<li>with param <code>name</code> of type <code>String</code>
+<ul>
+<li>with annotation <code>@path</code></li>
+</ul>
+</li>
+<li>with param <code>greeting</code> of type <code>String</code>
+<ul>
+<li>with annotation <code>@body</code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</blockquote>
+<p>The <code>OpsMirror</code> provides this information via type members:</p>
+<pre><code class="language-scala">val Mirror_GreetService: OpsMirror {
+  type MirroredType = GreetService;
+  type MirroredLabel = &quot;GreetService&quot;;
+  type MirroredOperationLabels = (&quot;greet&quot;, &quot;setGreeting&quot;);
+  type MirroredOperations = (
+    Operation {
+      type InputLabels = (&quot;name&quot; *: EmptyTuple);
+      type InputTypes = (String *: EmptyTuple);
+      type InputMetadatas = (
+        ((Meta @path) *: EmptyTuple) *: EmptyTuple
+      );
+      type ErrorType = HttpError;
+      type OutputType = String;
+      type Metadata = (
+        (Meta @get(&quot;/greet/{name}&quot;)) *: EmptyTuple
+      );
+    },
+    Operation {
+      type InputLabels = (&quot;name&quot;, &quot;greeting&quot;);
+      type InputTypes = (String, String);
+      type InputMetadatas = (
+        ((Meta @path) *: EmptyTuple),
+        ((Meta @body) *: EmptyTuple)
+      );
+      type ErrorType = HttpError;
+      type OutputType = Unit;
+      type Metadata = (
+        (Meta @post(&quot;/greet/{name}&quot;)) *: EmptyTuple
+      );
+    }
+  );
+} = summon[OpsMirror.Of[GreetService]]
+</code></pre>
+<p>Following the techniques shown in the <a href="https://docs.scala-lang.org/scala3/reference/contextual/derivation-macro.html">Scala 3 documentation</a>, you can use quotes and splices to extract whichever information you need. The implementation for <code>HttpService.derived</code> can be found <a href="https://github.com/bishabosha/ops-mirror/blob/f65246115e54a514892123d6d951d41800d4f9da/examples/serverlib/ServerMacros.scala#L47-L92">here</a>.</p>
+<blockquote>
+<p>Annotations are not themselves types, so to encode them at the type-level, the <code>Meta</code> type is used as a target placeholder, which helps to extract the annotation later.</p>
+</blockquote>
+<h2><a href="#type-safe-endpoints-using-ops-mirror" id="type-safe-endpoints-using-ops-mirror" class="anchor-link anchor-link__source"><i class="fa-solid fa-link"></i></a>Type-safe endpoints using ops-mirror</h2>
+<p>The <code>HttpService</code> type class is type-erased, but to implement server logic, we need to provide functions with the correct types. This is where <code>Endpoint</code> comes in:</p>
+<pre><code class="language-scala">trait HttpService[T]:
+  // the routes map has no per-route type information.
+  val routes: Map[String, Route]
+</code></pre>
+<p><code>Endpoints</code> wraps the <code>HttpService</code> type with <a href="https://docs.scala-lang.org/scala3/reference/changed-features/structural-types.html">structural refinements</a> to give a more type-safe API:</p>
+<pre><code class="language-scala">val e: Endpoints[GreetService] {
+  val greet: Endpoint[(String *: EmptyTuple), HttpError, String];
+  val setGreeting: Endpoint[(String, String), HttpError, Unit]
+} = HttpService.endpoints[GreetService]
+</code></pre>
+<p>The <code>HttpService.endpoints</code> method again uses the <code>OpsMirror</code> to extract the necessary information.</p>
+<p><code>Endpoint</code> itself is an opaque type wrapper of <code>Route</code>, i.e. it only adds static type information:</p>
+<pre><code class="language-scala">opaque type Endpoint[I &lt;: Tuple, E, O] &lt;: Route = Route
+</code></pre>
+<p><code>I</code> is a tuple of argument types to the endpoint, <code>E</code> is possible error type of the endpoint, and <code>O</code> is the result type of the endpoint.</p>
+<p>I won't go into details, but for the purpose of this article it is enough to state that both <code>Route</code> and <code>Endpoint</code> together contain a reification of all the metadata necessary for both <code>ServerBuilder</code> and <code>PartialRequest</code> to build upon.</p>
+<h2><a href="#other-uses-for-ops-mirror" id="other-uses-for-ops-mirror" class="anchor-link anchor-link__source"><i class="fa-solid fa-link"></i></a>Other uses for ops-mirror</h2>
+<p>I think that the operation mirror is a general enough concept to take seriously. For example, it is also suitable for describing most RPC services, such as Language Server Protocol:</p>
+<pre><code class="language-scala">@error[ResponseError]
+trait LSP derives JsonRpcService {
+
+  @method(&quot;$/progress&quot;)
+  def progress(params: ProgressParams): Unit
+
+  @method(&quot;textDocument/completion&quot;)
+  def completion(
+    params: CompletionParams
+  ): Array[CompletionItem]
+
+  ...
+}
+</code></pre>
+<p>The idea being that <code>JsonRpcService</code> would also use <code>OpsMirror</code> as a helper in its <code>derived</code> method.</p>
+<h2><a href="#what-about-effect-tracking" id="what-about-effect-tracking" class="anchor-link anchor-link__source"><i class="fa-solid fa-link"></i></a>What about Effect tracking?</h2>
+<p>You might notice that all the examples so far have used no so-called &quot;effect&quot; types (such as <code>IO</code>, <code>Future</code>, etc.)</p>
+<p>This is deliberate. The idea being that the endpoint description should only contain the necessary detail to model the inputs/outputs of the service. Other concerns, such as execution model, error handling model, and others should be delegated to interpreters.</p>
+<p>e.g. in the HTTP example - the <code>ServerBuilder</code> provides an interpreter in direct-style via its <code>handle</code> extension method, which expects handlers as such:</p>
+<ul>
+<li>for <code>greet</code>, a function of type <code>String =&gt; Either[HttpError, String]</code>,</li>
+<li>for <code>setGreeting</code>, a function of type <code>(String, String) =&gt; Either[HttpError, Unit]</code>.</li>
+</ul>
+<p>If instead you prefer a purely functional style, then perhaps you would use an alternative server builder, that is specialized to an effect type.</p>
+<blockquote>
+<p>Another choice is to drop effect-polymorphism, and instead extract a concrete effect type from the result of each method. This is the approach of <a href="https://github.com/neandertech/smithy4s-deriving">smithy4s-deriving</a>. Arguably this is more in alignment with the user's expectation - but makes interpretation less flexible.</p>
+</blockquote>
+<h2><a href="#a-call-to-action" id="a-call-to-action" class="anchor-link anchor-link__source"><i class="fa-solid fa-link"></i></a>A Call to Action</h2>
+<p>At Scalar 2024 after my talk there was a lot of interest in this concept.</p>
+<p>If you are interested in developing the idea for operation mirrors, I invite you to participate at <a href="https://github.com/bishabosha/ops-mirror">bishabosha/ops-mirror</a> where we can develop more examples that push the boundaries of what is possible, discover the optimal API representation, and identify any shortcomings.</p>
+<p>One big decision is how to represent the metadata, should annotations be kept as-is, or perhaps converted to a more simple type-level representation?</p>
+<p>My view is that we should stay opinionated. e.g. the built-in <code>scala.deriving.Mirror</code> type-classes only work for a small subset of data structures. This makes them predicatable and overall a simpler programming model. So correspondingly I think a small subset of trait &quot;shapes&quot; should be supported, rather than a kitchen sink.</p>
+<p>Let's find out together.</p>
+</div><div class="container mb-2"><div class="row"><div class="col d-flex"><small><a href="/articles/simple-parsing-with-strings.html"><i class="fa-solid fa-angle-left"></i> Enhanced Simple Parsing for Scala</a></small></div><div class="col d-flex flex-row-reverse"></div></div></div></article></div></div></div></div><footer class="mt-auto"><div class="footer-copyright text-center py-3"><small>© 2024 Jamie Thompson.<span class="text-muted"> Last published 24/06/2024</span></small></div></footer><script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script><script src="/static/js/nav-toc.js" type="text/javascript"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/highlight.min.js" type="text/javascript"></script><script src="/static/js/hljs-scala3.js" type="text/javascript"></script><script src="/static/js/hljs.js" type="text/javascript"></script><script src="/static/js/katex-render.js" type="text/javascript"></script><script src="/static/js/admonition.js" type="text/javascript"></script></body></html>
