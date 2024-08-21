@@ -17,8 +17,9 @@ This isn't a standard migration effort however, as Mill customises the language 
 <li>Bytecode analyzers to detect changes in the build.</li>
 </ul>
 <h2><a href="#current-status" id="current-status" class="anchor-link anchor-link__source"><i class="fa-solid fa-link"></i></a>Current Status</h2>
-<p>As of August 20th 2024, the project is in progress, but most macros are ported, meaning that we can compile all of core Mill, and even compile some builds.
-No Scala 3 specific syntax is supported yet, and override inferrence is not yet implemented.</p>
+<p>As of August 21st 2024, the project is in progress, but most macros are ported, meaning that we can compile all of core Mill, and even compile some builds.
+Override inferrence is now implemented (See <a href="https://github.com/com-lihaoyi/mill-moduledefs/pull/14">mill-moduledefs PR</a>).</p>
+<p>No Scala 3 specific syntax is supported yet, which would be the next step, as well as supporting cross-modules.</p>
 <p>Here is a gif of compiling a Mill project where the build.sc file is compiled with Scala 3.5.0:</p>
 <p><img src="/static/img/projects/mill-scala3-milestone1.gif" class="img-fluid" alt="compiling a Mill project where the build itself is compiled with Scala 3.5.0" /></p>
 <h2><a href="#progress-diary" id="progress-diary" class="anchor-link anchor-link__source"><i class="fa-solid fa-link"></i></a>Progress Diary</h2>
@@ -256,7 +257,7 @@ No Scala 3 specific syntax is supported yet, and override inferrence is not yet 
 </ul>
 <h3><a href="#2024-aug-16" id="2024-aug-16" class="anchor-link anchor-link__source"><i class="fa-solid fa-link"></i></a>2024-aug-16</h3>
 <ul>
-<li><a href="https://github.com/com-lihaoyi/mainargs/pull/148">Mainargs PR</a> was merged, releasing in version 0.7.2. I updated my <a href="https://github.com/com-lihaoyi/mill/pull/3369">Mill PR</a> to include the new dependency and GitHub actions CI now records several integration tests passing, such as <code>example.tasks[6-workers].local</code></li>
+<li><a href="https://github.com/com-lihaoyi/mainargs/pull/148">Mainargs PR</a> was merged, released in version 0.7.2. I updated my <a href="https://github.com/com-lihaoyi/mill/pull/3369">Mill PR</a> to include the new dependency and GitHub actions CI now records several integration tests passing, such as <code>example.tasks[6-workers].local</code></li>
 </ul>
 <h3><a href="#2024-aug-20" id="2024-aug-20" class="anchor-link anchor-link__source"><i class="fa-solid fa-link"></i></a>2024-aug-20</h3>
 <ul>
