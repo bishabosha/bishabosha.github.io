@@ -2,7 +2,7 @@
 <p>I love to share ideas about programming, whether it is though speaking,
 producing video tutorials, or engaging in the learning process to deliver the best materials for newcomers.</p>
 <p>As a software engineer, my passions are programming language design, and simplifying APIs.</p>
-</div></div></div></div><div class="sticky-top top-aligned jumbotron sidebar shadow py-lg-4 py-3"><nav class="toc-nav"><ol class="list-unstyled"><li class="toc-level-1"><a href="#port-mill-build.sc-files-to-scala-3.html">Port Mill build.sc files to Scala 3</a></li><li class="toc-level-2"><a href="#about-the-project">About the Project</a></li><li class="toc-level-2"><a href="#current-status">Current Status</a></li><li class="toc-level-2"><a href="#progress-diary">Progress Diary</a></li><li class="toc-level-3"><a href="#2024-aug-05">2024-aug-05</a></li><li class="toc-level-3"><a href="#2024-aug-06">2024-aug-06</a></li><li class="toc-level-3"><a href="#2024-aug-07">2024-aug-07</a></li><li class="toc-level-3"><a href="#2024-aug-08">2024-aug-08</a></li><li class="toc-level-3"><a href="#2024-aug-09">2024-aug-09</a></li><li class="toc-level-3"><a href="#2024-aug-12">2024-aug-12</a></li><li class="toc-level-3"><a href="#2024-aug-13">2024-aug-13</a></li><li class="toc-level-3"><a href="#2024-aug-14">2024-aug-14</a></li><li class="toc-level-3"><a href="#2024-aug-16">2024-aug-16</a></li><li class="toc-level-3"><a href="#2024-aug-20">2024-aug-20</a></li><li class="toc-level-3"><a href="#2024-aug-21">2024-aug-21</a></li><li class="toc-level-3"><a href="#2024-aug-22">2024-aug-22</a></li><li class="toc-level-3"><a href="#2024-aug-23">2024-aug-23</a></li><li class="toc-level-3"><a href="#2024-aug-27">2024-aug-27</a></li><li class="toc-level-3"><a href="#2024-sep-04">2024-sep-04</a></li><li class="toc-level-3"><a href="#2024-sep-06">2024-sep-06</a></li><li class="toc-level-3"><a href="#2024-sep-09">2024-sep-09</a></li><li class="toc-level-3"><a href="#2024-sep-10">2024-sep-10</a></li><li class="toc-level-3"><a href="#2024-sep-11">2024-sep-11</a></li><li class="toc-level-3"><a href="#2024-sep-12">2024-sep-12</a></li><li class="toc-level-3"><a href="#2024-sep-13">2024-sep-13</a></li><li class="toc-level-3"><a href="#2024-sep-14">2024-sep-14</a></li><li class="toc-level-3"><a href="#2024-sep-15">2024-sep-15</a></li></ol></nav></div></div><div class="col-lg-8"><div class="jumbotron bg-light py-lg-5 py-3"><article><h1 id="port-mill-build.sc-files-to-scala-3.html" class="display-5 anchor-link__source"><img src="/static/img/mill-logo-white.svg" alt="Project 1 Icon" class="mr-2 bg-dark p-1 img-icon" />Port Mill build.sc files to Scala 3</h1><ul class="list-inline mb-2"><li class="list-inline-item"><small><span class="text-muted">Start: Aug/2024</span></small></li><li class="list-inline-item"><small><i class="fa-solid fa-hourglass-start"></i> 20 minute read</small></li><li class="list-inline-item"><small><a href="/projects/"><i class="fa-solid fa-angle-up"></i> all projects</a></small></li></ul><hr /><blockquote><p><a href="https://github.com/com-lihaoyi/mill/pull/3369" target="_blank"><small><i class="fa-solid fa-arrow-up-right-from-square"></i></small> Project URL</a><b> this project is still in progress...</b></p><p><i><b>Summary: </b>Enhance the Mill build tool (github.com/com-lihaoyi/mill) by enabling users to write build.sc files with Scala 3 syntax and libraries.</i></p></blockquote><div><h2><a href="#about-the-project" id="about-the-project" class="anchor-link anchor-link__source"><i class="fa-solid fa-link"></i></a>About the Project</h2>
+</div></div></div></div><div class="sticky-top top-aligned jumbotron sidebar shadow py-lg-4 py-3"><nav class="toc-nav"><ol class="list-unstyled"><li class="toc-level-1"><a href="#port-mill-build.sc-files-to-scala-3.html">Port Mill build.sc files to Scala 3</a></li><li class="toc-level-2"><a href="#about-the-project">About the Project</a></li><li class="toc-level-2"><a href="#current-status">Current Status</a></li><li class="toc-level-2"><a href="#progress-diary">Progress Diary</a></li><li class="toc-level-3"><a href="#2024-aug-05">2024-aug-05</a></li><li class="toc-level-3"><a href="#2024-aug-06">2024-aug-06</a></li><li class="toc-level-3"><a href="#2024-aug-07">2024-aug-07</a></li><li class="toc-level-3"><a href="#2024-aug-08">2024-aug-08</a></li><li class="toc-level-3"><a href="#2024-aug-09">2024-aug-09</a></li><li class="toc-level-3"><a href="#2024-aug-12">2024-aug-12</a></li><li class="toc-level-3"><a href="#2024-aug-13">2024-aug-13</a></li><li class="toc-level-3"><a href="#2024-aug-14">2024-aug-14</a></li><li class="toc-level-3"><a href="#2024-aug-16">2024-aug-16</a></li><li class="toc-level-3"><a href="#2024-aug-20">2024-aug-20</a></li><li class="toc-level-3"><a href="#2024-aug-21">2024-aug-21</a></li><li class="toc-level-3"><a href="#2024-aug-22">2024-aug-22</a></li><li class="toc-level-3"><a href="#2024-aug-23">2024-aug-23</a></li><li class="toc-level-3"><a href="#2024-aug-27">2024-aug-27</a></li><li class="toc-level-3"><a href="#2024-sep-04">2024-sep-04</a></li><li class="toc-level-3"><a href="#2024-sep-06">2024-sep-06</a></li><li class="toc-level-3"><a href="#2024-sep-09">2024-sep-09</a></li><li class="toc-level-3"><a href="#2024-sep-10">2024-sep-10</a></li><li class="toc-level-3"><a href="#2024-sep-11">2024-sep-11</a></li><li class="toc-level-3"><a href="#2024-sep-12">2024-sep-12</a></li><li class="toc-level-3"><a href="#2024-sep-13">2024-sep-13</a></li><li class="toc-level-3"><a href="#2024-sep-14">2024-sep-14</a></li><li class="toc-level-3"><a href="#2024-sep-15">2024-sep-15</a></li><li class="toc-level-3"><a href="#2024-sep-16">2024-sep-16</a></li><li class="toc-level-3"><a href="#2024-sep-17">2024-sep-17</a></li><li class="toc-level-3"><a href="#2024-sep-19">2024-sep-19</a></li><li class="toc-level-3"><a href="#2024-sep-20">2024-sep-20</a></li><li class="toc-level-3"><a href="#2024-sep-21">2024-sep-21</a></li><li class="toc-level-3"><a href="#2024-sep-23">2024-sep-23</a></li><li class="toc-level-3"><a href="#2024-sep-24">2024-sep-24</a></li><li class="toc-level-3"><a href="#2024-sep-25">2024-sep-25</a></li></ol></nav></div></div><div class="col-lg-8"><div class="jumbotron bg-light py-lg-5 py-3"><article><h1 id="port-mill-build.sc-files-to-scala-3.html" class="display-5 anchor-link__source"><img src="/static/img/mill-logo-white.svg" alt="Project 1 Icon" class="mr-2 bg-dark p-1 img-icon" />Port Mill build.sc files to Scala 3</h1><ul class="list-inline mb-2"><li class="list-inline-item"><small><span class="text-muted">Start: Aug/2024</span></small></li><li class="list-inline-item"><small><i class="fa-solid fa-hourglass-start"></i> 24 minute read</small></li><li class="list-inline-item"><small><a href="/projects/"><i class="fa-solid fa-angle-up"></i> all projects</a></small></li></ul><hr /><blockquote><p><a href="https://github.com/com-lihaoyi/mill/pull/3369" target="_blank"><small><i class="fa-solid fa-arrow-up-right-from-square"></i></small> Project URL</a><b> this project is still in progress...</b></p><p><i><b>Summary: </b>Enhance the Mill build tool (github.com/com-lihaoyi/mill) by enabling users to write build.sc files with Scala 3 syntax and libraries.</i></p></blockquote><div><h2><a href="#about-the-project" id="about-the-project" class="anchor-link anchor-link__source"><i class="fa-solid fa-link"></i></a>About the Project</h2>
 <p>The <a href="https://mill-build.org">Mill build tool</a> lets users write build pipelines in the Scala programming language.
 It provides a DSL that makes it simple for users to build a graph of tasks, and dependencies between them, and Mill provides a command line interface to invoke these tasks.</p>
 <p>Before starting the project in August 2024, Mill build definitions were locked to the latest Scala 2.13 version.
@@ -17,10 +17,10 @@ This isn't a standard migration effort however, as Mill customises the language 
 <li>Bytecode analyzers to detect changes in the build.</li>
 </ul>
 <h2><a href="#current-status" id="current-status" class="anchor-link anchor-link__source"><i class="fa-solid fa-link"></i></a>Current Status</h2>
-<p>As of September 15th 2024, the project is in progress (<a href="https://github.com/com-lihaoyi/mill/pull/3369">with a PR to Mill</a>). All macros, and override inferrence are ported, meaning that we can compile all of core Mill, and even compile many integration test builds.</p>
+<p>As of September 25th 2024, the project is in progress (<a href="https://github.com/com-lihaoyi/mill/pull/3369">with a PR to Mill</a>). All present tests are passing in the CI, meaning that only new additions are needed to be worked on.</p>
 <p>In progress:</p>
 <ul>
-<li>🛠️ Fix all library dependencies</li>
+<li>🛠️ Support new Scala 3 syntax in build.sc files</li>
 </ul>
 <p>Done:</p>
 <ul>
@@ -35,13 +35,14 @@ This isn't a standard migration effort however, as Mill customises the language 
 <li>✅ Moduledefs compiler plugin (override inferrence)</li>
 <li>✅ All core Mill modules compile with Scala 3.5.0</li>
 <li>✅ Fix Zinc reporter patch linenumbers of build scripts</li>
+<li>✅ Fix all library dependencies</li>
 </ul>
 <p>Still to do:</p>
 <ul>
-<li>🚧 Support new Scala 3 syntax in build.sc files</li>
-<li>🚧 Port acyclic plugin to Scala 3 (optional)</li>
+<li>🚧 Port acyclic plugin to Scala 3 (optional, someone else may do this)</li>
 <li>🚧 Cleanup compiler warnings for outdated syntax.</li>
 <li>🚧 Fix BSP reporter linenumbers for build scripts</li>
+<li>🚧 Identify any possible hidden bugs discovered by testing Scala 3 code.</li>
 </ul>
 <p>Here is a gif of compiling a Mill project where the build.sc file is compiled with Scala 3.5.0:</p>
 <p><img src="/static/img/projects/mill-scala3-milestone1.gif" class="img-fluid" alt="compiling a Mill project where the build itself is compiled with Scala 3.5.0" /></p>
@@ -367,4 +368,64 @@ This isn't a standard migration effort however, as Mill customises the language 
 <li>Next, i fixed the <code>integration.feature[init].local</code> test by updating the classpath of the Giter8 module in scalalib. I noticed that a dependency resolution error was not being reported so i ensure that it does.</li>
 <li>I also removed the deadcode linenumbers module.</li>
 </ul>
-</div></article></div></div></div></div><footer class="mt-auto"><div class="footer-copyright text-center py-3"><small>© 2024 Jamie Thompson.<span class="text-muted"> Last published 15/Sep/2024</span></small></div></footer><script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script><script src="/static/js/nav-toc.js" type="text/javascript"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/highlight.min.js" type="text/javascript"></script><script src="/static/js/hljs-scala3.js" type="text/javascript"></script><script src="/static/js/hljs.js" type="text/javascript"></script><script src="/static/js/katex-render.js" type="text/javascript"></script><script src="/static/js/admonition.js" type="text/javascript"></script></body></html>
+<h3><a href="#2024-sep-16" id="2024-sep-16" class="anchor-link anchor-link__source"><i class="fa-solid fa-link"></i></a>2024-sep-16</h3>
+<ul>
+<li>Rebased the PR against Main, in which I had to tweak <code>CodeGen</code> to account for the new structuring of json formatters and TokenReaders.</li>
+<li><code>CodeGen</code> also had to be tweaked to generate the Discover value in the same wrapper object as the user code. If not, then path dependent types would not match when trying to summon <code>mainargs.TokenReaders[Foo]</code> if <code>Foo</code> was a custom type. This meant having to merge all the Discover values from child modules (from <code>package.mill</code> files), and also substituting <code>classOf[package_]</code> for <code>classOf[package_.type]</code> in the map.</li>
+<li>^ it might be possible in <code>mainargs</code> to substitute the prefix of the caller when summoning <code>TokenReaders</code> which would make this “hack” unnecessary, but it is unverified if it could work.</li>
+<li>I also reimplemented the <code>contrib.scoverage.api</code> module to be java based, so it didn’t matter if the scala version was not compatible with the underlying scoverage library API.</li>
+</ul>
+<h3><a href="#2024-sep-17" id="2024-sep-17" class="anchor-link anchor-link__source"><i class="fa-solid fa-link"></i></a>2024-sep-17</h3>
+<ul>
+<li>Skipped the test <code>integration.feature[plugin-classpath].local</code> as it depends on a third party Mill plugin, not binary compatible with the scala 3 version of mill</li>
+</ul>
+<h3><a href="#2024-sep-19" id="2024-sep-19" class="anchor-link anchor-link__source"><i class="fa-solid fa-link"></i></a>2024-sep-19</h3>
+<ul>
+<li>Fix classpath resolution problems with contrib twirllib and contrib playlib</li>
+</ul>
+<h3><a href="#2024-sep-20" id="2024-sep-20" class="anchor-link anchor-link__source"><i class="fa-solid fa-link"></i></a>2024-sep-20</h3>
+<ul>
+<li>Fix warnings about <code>scala.AnyKind</code> in the <code>contrib.proguard</code> tests</li>
+<li>Remove a test source from being compiled in <code>example.thirdparty[3-mockito].local</code> because it often failed in the CI (and it isn’t a necessary test to prove mill can substitute as the build tool)</li>
+<li>Fix contrib.scoverage integration test</li>
+<li>Filtered a problematic file from scalafmt checks (due to outdated scalafmt dependency)</li>
+<li>Skipped checking scalafix in scala 3 sources, because the scalafix-interfaces library does not support reflectively loading the scala 3 scalafix library.</li>
+<li>Patched Mima checks to correctly load the previous jar (accounting for platform suffix changes)</li>
+<li>Then skipped the mima checks because there were 1000s of (expected) errors.</li>
+<li>Patched any remaining failures due to not reformatting with scalafmt</li>
+<li>Generated a patch file so that the <code>ci/test-mill-bootstrap.sh</code> test passed.</li>
+<li>Managed to pass all tests in the CI on the PR #3369</li>
+</ul>
+<h3><a href="#2024-sep-21" id="2024-sep-21" class="anchor-link anchor-link__source"><i class="fa-solid fa-link"></i></a>2024-sep-21</h3>
+<ul>
+<li>Created initial <code>integration.feature[scala-3-syntax]</code> test, which failed due to fastparse’s “scalaparse” being inadequate.</li>
+<li>Fixed a problem with the new Zinc error formatter which broke ansi escape codes.</li>
+<li>Experimented with reimplementing scalaparse from dotty’s grammar, but it was taking too long.</li>
+<li>Investigated scalameta as a possible parser. Haoyi preferred to reuse dotty’s parser to reduce dependencies, it was also decided to only support the same version as mill is built with.</li>
+</ul>
+<h3><a href="#2024-sep-23" id="2024-sep-23" class="anchor-link anchor-link__source"><i class="fa-solid fa-link"></i></a>2024-sep-23</h3>
+<ul>
+<li>I abstracted the necessary parsing operations <code>splitScript</code> and <code>parseImportHooksWithIndices</code> into a trait, in a new <code>runner.worker-api</code> module. The existing <code>runner.Parsers</code> object implements the trait for Scala 2, and the Scala 3 implementation was stubbed in a <code>runner.worker</code> module, which an instance for should be loaded via reflection.</li>
+<li>Next I abstracted the <code>FileImportGraph.parseBuildFiles</code> method over the new parser trait, which is called in <code>MillBuildBootstrap</code> (i.e. before we load <code>MillBuildRootModule</code>). This posed a challenge for how to resolve and load the <code>mill-runner-worker</code> library reflectively.</li>
+<li>I implemented the steps to load a worker instance are as follows:
+<ul>
+<li>Resolve in <code>MillMain</code> the dependencies <code>mill-runner-worker</code> and <code>scala3-compiler</code> to a classpath and reflectively load the runner.</li>
+<li>Pass the worker and resolved classpath to <code>MillBuildRootModule.BootstrapModule</code> which then re-uses it in its own <code>parseBuildFiles</code> task.</li>
+<li>The pre-computed worker classpath is then used in <code>generateScriptSources</code> to write the classpath to the generated <code>MillMiscInfo</code> which can then resolve the worker the next time the class is loaded.</li>
+</ul>
+</li>
+</ul>
+<h3><a href="#2024-sep-24" id="2024-sep-24" class="anchor-link anchor-link__source"><i class="fa-solid fa-link"></i></a>2024-sep-24</h3>
+<ul>
+<li>I implemented the first part of scriptSplitting - setting up the compiler to run only the parser phase, and report any errors - I implemented my own error formatting, as I wasn't sure if I would need to manipulate positions again.</li>
+<li>I also tweaked the SkipScalafix Mill module so it can call the super.fix (by moving scala version from a task to a method)</li>
+<li>I then realised it wasn’t necessary to run the proper compiler pipeline, I could initialise a context with a source file and reporter, then create an outline parser directly. I then traversed the output to extract the top-level packages, and top level statement strings by creating slices of the source file content for the span of each statement, and slices of the whitespace in between.</li>
+</ul>
+<h3><a href="#2024-sep-25" id="2024-sep-25" class="anchor-link anchor-link__source"><i class="fa-solid fa-link"></i></a>2024-sep-25</h3>
+<ul>
+<li>I noticed there was a long delay in loading the standard definitions, so I wanted to see if it was possible to cache the initial context loading. I discovered by re-running split script 10000 times concurrently with futures that parsing had to be synchronized, but it was safe to share the same initial context</li>
+<li>I then discovered that actually the standard definitions did not need to be initialised before parsing, so this saved another initial load time.</li>
+<li>Implement import parsing - i had to fix a mistake in script splitting, because in dotty comma-separated imports are treated as separate statements. However they are not able to be parsed standalone from text, so I had to pack them all together as one statement</li>
+<li>Implemented top-level object scanning (compatible with scala 2), however i needed to extract more information to be compatible with Scala 3 - a possible end marker (for renaming <code>`package`</code> to <code>package_</code>), and also the problem with path-dependent types in the discover macro also needed to be applied to when the user provides an explicit top level object. This means i had to extract a suitable position to splice in code within the user code (i.e. within an object), so i extracted the position of the initial statement</li>
+</ul>
+</div></article></div></div></div></div><footer class="mt-auto"><div class="footer-copyright text-center py-3"><small>© 2024 Jamie Thompson.<span class="text-muted"> Last published 26/Sep/2024</span></small></div></footer><script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script><script src="/static/js/nav-toc.js" type="text/javascript"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/highlight.min.js" type="text/javascript"></script><script src="/static/js/hljs-scala3.js" type="text/javascript"></script><script src="/static/js/hljs.js" type="text/javascript"></script><script src="/static/js/katex-render.js" type="text/javascript"></script><script src="/static/js/admonition.js" type="text/javascript"></script></body></html>
