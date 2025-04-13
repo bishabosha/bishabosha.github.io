@@ -1,0 +1,246 @@
+<!DOCTYPE html><html><head><meta charset="utf-8" /><meta name="Content-Type" content="text/html; charset=utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.css" /><link rel="stylesheet" href="/static/css/style_28d0663040790cd23ff0c2e10c66384d.css" /><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css" crossorigin="anonymous" /><title>Scala's New Named Tuples: why you should embrace structural types | bishabosha</title><meta name="description" content="Explaining the motivation behind named tuples, how they work, their relationship to structural types, and their practical applications, along with their current limitations." /><meta name="twitter:card" content="summary" /><meta name="twitter:title" content="Scala's New Named Tuples: why you should embrace structural types | bishabosha" /><meta name="twitter:site" content="@bishabosha" /><meta name="twitter:description" content="Explaining the motivation behind named tuples, how they work, their relationship to structural types, and their practical applications, along with their current limitations." /><meta name="og:title" content="Scala's New Named Tuples: why you should embrace structural types | bishabosha" /><meta name="og:description" content="Explaining the motivation behind named tuples, how they work, their relationship to structural types, and their practical applications, along with their current limitations." /><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/styles/default.min.css" /><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css" /><script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js" type="text/javascript"></script><link rel="stylesheet" href="/static/css/admonition_972c50a2320249eebf61150270d503dc.css" /></head><body class="d-flex flex-column min-vh-100"><nav class="navbar navbar-expand-md navbar-light fixed-top bg-light"><div class="container-fluid"><a class="navbar-brand navbar-slash" href="/">bishabosha</a><button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button><div class="collapse navbar-collapse" id="navbarSupportedContent"><ul class="navbar-nav me-auto"><li class="nav-item"><a class="nav-link" href="/about/">About</a></li><li class="nav-item"><a class="nav-link active" aria-current="page" href="/articles/">Articles</a></li><li class="nav-item"><a class="nav-link" href="/projects/">Projects</a></li><li class="nav-item"><a class="nav-link" href="/talks/">Talks</a></li></ul></div></div></nav><div class="container"><div class="row"><div class="col-lg-4"><div class="bio-box jumbotron sidebar shadow py-lg-4 py-3 bio-box__top"><div class="bio-main"><table><tr><td class="bio-left"><div class="bio-photo"><img src="/static/img/jamie_thompson_profile.png" alt="photo of bishabosha" class="img-avatar" /></div></td><td class="bio-right"><p><span class="bio-name">Jamie Thompson</span></p></td></tr></table><ul class="list-inline"><li class="list-inline-item"><p class="text-center mb-1"><small><a href="mailto:jamie.thompson@bath.edu" class="bio-link"><i class="fa-solid fa-envelope fa-lg"></i><br />E-Mail</a></small></p></li><li class="list-inline-item"><p class="text-center mb-1"><small><a href="https://github.com/bishabosha" class="bio-link" rel="me"><i class="fa-brands fa-github fa-lg"></i><br />GitHub</a></small></p></li><li class="list-inline-item"><p class="text-center mb-1"><small><a href="https://twitter.com/bishabosha" class="bio-link" rel="me"><i class="fa-brands fa-twitter fa-lg"></i><br />Twitter</a></small></p></li><li class="list-inline-item"><p class="text-center mb-1"><small><a href="https://www.linkedin.com/in/james-richard-thompson/" class="bio-link" rel="me"><i class="fa-brands fa-linkedin fa-lg"></i><br />LinkedIn</a></small></p></li><li class="list-inline-item"><p class="text-center mb-1"><small><a href="https://fosstodon.org/@jrthompson" class="bio-link" rel="me"><i class="fa-brands fa-mastodon fa-lg"></i><br />Mastodon</a></small></p></li></ul><div class="d-none d-sm-none d-lg-block"><hr /><div class="bio-body bio-expand" tabindex="0"><p>Compiler hacker. This is an archive for my thoughts on programming, past and future.</p>
+<p>Also a place to gather all the links.</p>
+<p><a href="https://jamie-thompson-dev.github.io/"><strong>professional enquiries</strong></a>.</p>
+</div></div></div></div><div id="sidebar-anchor" class="sticky-top top-aligned jumbotron sidebar sidebar__mobile shadow py-lg-4 py-3"><div id="sidebar-toggler" class="sidebar_toggle"><i class="fa-regular fa-square-caret-right"></i></div><nav class="toc-nav"><ol class="list-unstyled"><li class="toc-level-1"><a href="#scala's-new-named-tuples:-why-you-should-embrace-structural-types.html">Scala's New Named Tuples: why you should embrace structural types</a></li><li class="toc-level-2"><a href="#motivation">Motivation</a></li><li class="toc-level-2"><a href="#named-tuples-overview">Named Tuples Overview</a></li><li class="toc-level-2"><a href="#demos--examples">Demos &amp; Examples</a></li></ol></nav></div></div><div class="col-lg-8"><div class="jumbotron bg-light py-lg-5 py-3"><article><h1 id="scala's-new-named-tuples:-why-you-should-embrace-structural-types.html" class="display-5 anchor-link__source">Scala's New Named Tuples: why you should embrace structural types</h1><ul class="list-inline mb-2"><li class="list-inline-item"><small><span class="text-muted">Monday, 14 April 2025</span></small></li><li class="list-inline-item"><small><i class="fa-solid fa-hourglass-start"></i> 8 minute read</small></li><li class="list-inline-item"><small><a href="/articles/"><i class="fa-solid fa-angle-up"></i> all articles</a></small></li></ul><hr /><div class="container mb-2"><div class="row"><div class="col d-flex"><small><a href="/articles/reviving-pizza.html"><i class="fa-solid fa-angle-left"></i> Coding with Pizza in 2024</a></small></div><div class="col d-flex flex-row-reverse"></div></div></div><div><p>Scala 3.7 stabilises the Named Tuples proposal, giving users new syntax for structural types and values, and makes it simpler to do typelevel programming without macros. Read on for a summary of the key features and benefits of named tuples, and practical examples.</p>
+<blockquote>
+<p>This article is an abridged version of my talk <a href="https://youtu.be/Qeavi9M65Qw">&quot;Going Structural with Named Tuples&quot;</a> from Scalar 2025. Please watch for more entertainment value (and even more information!) You can also view more of the examples in the GitHub repo <a href="https://github.com/bishabosha/scalar-2025">bishabosha/scalar-2025</a>.</p>
+</blockquote>
+<h2><a href="#motivation" id="motivation" class="anchor-link anchor-link__source"><i class="fa-solid fa-link"></i></a>Motivation</h2>
+<p>So why is the feature being introduced?</p>
+<p><strong>Named arguments in pattern matching</strong></p>
+<p>If you are tired of long lists of wildcards when pattern matching on case classes, now you can choose exactly which fields to match on, and ignore the rest:</p>
+<pre><code class="language-scala">// Instead of: case Person(_, age, _, _) =&gt; ..., You can:
+person match { case Person(age = a) =&gt; ... }
+</code></pre>
+<p><strong>Label multiple return values</strong></p>
+<p>With named tuples, you can provide names to each value, where previously a tuple (with unclear meaning) would be used:</p>
+<pre><code class="language-scala">// Instead of: def partition(seq: Seq[T]): (Seq[T], Seq[T]), You can:
+def partition(seq: Seq[T]): (matches: Seq[T], others: Seq[T])
+</code></pre>
+<p><strong>Address shortcoming of current structural typing</strong></p>
+<p>Scala has had structural types since 2.6.0 (released in 2007), but named tuples make them easier to use without macros or casting.</p>
+<p><strong>Why use structural types?</strong></p>
+<ul>
+<li><strong>Avoid rigidity:</strong> Only the fields matter, simplifying the usage of data, rather than planning a complex class hierarchy.</li>
+<li><strong>Ad-hoc Types:</strong> temporary values in a complex expression (such as method chaining) are well suited for structural types, avoiding the need for boilerplate code.</li>
+<li><strong>Narrow Views:</strong> Only track the fields you care about from larger data structures (e.g., JSON APIs) to reduce coupling.</li>
+<li><strong>Composition:</strong> Structural values can be combined, preserving the fields of both while preserving type safety.</li>
+<li><strong>Schema based derivation:</strong> Derive types from data to validate expressions, or make more flexible programs that compose easily.</li>
+</ul>
+<p><strong>An overview of the status-quo for structural typing in Scala</strong></p>
+<p>To summarise, structural types (opposed to nominal types) let you define types whose type equality is defined by their members (fields and methods) rather than the name of the type.</p>
+<pre><code class="language-scala">// Example: Structural Type
+type Person = Record {
+  val name: String
+  val age: Int
+}
+
+def greet(p: Person): Unit = println(s&quot;Hello, ${p.name}!&quot;)
+</code></pre>
+<p>Typically, you create a structural type by &quot;refining&quot; an arbitrary class like <code>Record</code> with some structural members, which don't necessarily correspond to a real existing field.</p>
+<p>The idea is that a type could refine <code>Record</code> with <strong>as many structural members as you want</strong>, and as long as it has the <code>name</code> and <code>age</code> fields, it is a subtype of <code>Person</code>, which also known as &quot;width subtyping&quot;.</p>
+<p><strong>Non-determinism</strong></p>
+<p>The main issue is that with this representation of structural types in Scala, there is no deterministic mapping between fields and their underlying representation in memory, meaning that names must be resolved dynamically at runtime.</p>
+<p>To illustrate, here is an example of how to define a class capable of structural typing in scala:</p>
+<pre><code class="language-scala">class Record extends scala.Selectable:
+  def selectDynamic(name: String): Any = ???
+</code></pre>
+<p>So for the <code>Person</code> type, accessing the <code>name</code> and <code>age</code> fields will delegate to the <code>selectDynamic</code> method of the <code>Record</code> class. The concrete structural refinements that could exist are completely opaque to the method, so there is not a way to optimise the representation, therefore often you must resort to a hashmap for storage, or use reflection for access if there are real fields.</p>
+<p>Named Tuples will address some of these shortcomings, without the need for macros.</p>
+<h2><a href="#named-tuples-overview" id="named-tuples-overview" class="anchor-link anchor-link__source"><i class="fa-solid fa-link"></i></a>Named Tuples Overview</h2>
+<p>As mentioned above, Named Tuples are coming in Scala 3.7.0 (after being proposed and refined in SIP-58).</p>
+<p><strong>Syntax</strong></p>
+<p>In definition and use site, they intentionally look like a case class constructor without the leading class name.</p>
+<pre><code class="language-scala">// Named Tuple Type Definition
+type Person = (name: String, age: Int)
+
+// Value Syntax
+val person: Person = (name = &quot;Alice&quot;, age = 30) // Or (&quot;Alice&quot;, 30)
+
+// Selecting Fields
+assert(person.name == &quot;Alice&quot;)
+assert(person.age  == 30)
+</code></pre>
+<p><strong>Type Inference</strong></p>
+<p>Types for Named Tuple literals are inferred, meaning that the fields only need to be named once. This is useful for creating &quot;on the fly&quot; object values, such as local variables that aggregate multiple values.</p>
+<pre><code class="language-scala">def makeAccumulator() =
+  var acc = 0
+  (
+    add   = (x: Int) =&gt; acc += x,
+    reset = () =&gt; acc = 0,
+    get   = () =&gt; acc
+  )
+
+val acc = makeAccumulator()
+//  acc: (
+//    add   : Int =&gt; Unit,
+//    reset : () =&gt; Unit,
+//    get   : () =&gt; Int
+//  )
+</code></pre>
+<p><strong>Pattern Matching</strong></p>
+<p>Deconstruct named tuples by field names in any order, or even ignore fields.</p>
+<pre><code class="language-scala">person match
+  case (name = n, age = a) =&gt; println(s&quot;Name: $n, Age: $a&quot;)
+  case (age = a, name = n) =&gt; println(s&quot;Name: $n, Age: $a&quot;)
+  case (name = n)          =&gt; println(s&quot;Name: $n&quot;)
+</code></pre>
+<p><strong>Implementation</strong></p>
+<p>Under the hood, named tuples are zero-cost wrappers around standard tuples. Their labels only exist at compile time, as illustrated by the following desugaring of the types:</p>
+<pre><code class="language-scala">// three equivalent types
+type Person = (name: String, age: Int)
+type Person = NamedTuple[(&quot;name&quot;, &quot;age&quot;), (String, Int)]
+type Person = NamedTuple[(&quot;name&quot; *: &quot;age&quot; *: EmptyTuple), (String *: Int *: EmptyTuple)]
+</code></pre>
+<p>The <code>NamedTuple</code> type is a pair of two tuple types: a tuple of labels, and a tuple representing the underlying type of the fields. <code>NamedTuple</code> itself is a zero-cost wrapper over its second argument.</p>
+<p>With this formulation, named tuple types can be constructed programatically from first class types, without macros. (Conversely to construct a type refinement programatically you must use the <a href="https://www.scala-lang.org/api/3.6.4/scala/quoted/Quotes.html">Quotes</a> reflection API.) This leads to a simpler design for API's that work with named tuples.</p>
+<p><strong>Generic Operations</strong></p>
+<p>Named tuples support zero-cost conversions to and from tuples, type class derivation (using <code>Mirror</code>), and structural operations such as concatenation (<code>++</code> operator) with compile-time checks for disjoint names. Finally you can convert a case class type to a named tuple type with equivalent fields:</p>
+<pre><code class="language-scala">// conversions to/from tuple
+val alice: Person = (&quot;Alice&quot;, 42).withNames[(&quot;name&quot;, &quot;age&quot;)]
+assert(alice(1) == alice.age)
+summon[Mirror.Of[Person]].fromProduct(alice.toTuple)
+</code></pre>
+<pre><code class="language-scala">// concatenation
+val nameT = (name = &quot;Alice&quot;)
+val ageT  = (age  = 42)
+val person: Person = nameT ++ ageT
+person(0) == person.name
+person(1) == person.age
+</code></pre>
+<pre><code class="language-scala">// type operations: wrap each field
+val optPerson: NamedTuple.Map[Person, Option] =
+  (name = Some(&quot;Alice&quot;), age = None)
+</code></pre>
+<pre><code class="language-scala">// type operations: use case class as a schema
+case class City(name: String, population: Int)
+
+val Warsaw: NamedTuple.From[City] =
+  (name = &quot;Warsaw&quot;, population = 1_800_000)
+</code></pre>
+<p><strong>New and improved structural types</strong></p>
+<p>Now programatic structural types can declare a <code>Fields</code> member type, which should be some concrete named tuple type:</p>
+<pre><code class="language-scala">class Expr[Schema] extends Selectable:
+  type Fields = NamedTuple.Map[NamedTuple.From[Schema], Expr]
+  def selectDynamic(name: String): Any = ???
+</code></pre>
+<p>The key improvement is that the definition of the <code>selectDynamic</code> method can inspect the <code>Fields</code> type, which means you can adjust the implementation based on the expected type, or enhance safety through further validation.</p>
+<p>Named Tuples also improve the ergonomics of defining such a type, because the <code>NamedTuple.From</code> type (convert case class types to named tuples), and type-level operations such as <code>Map</code> make it easy to derive new types from an existing schema.</p>
+<h2><a href="#demos--examples" id="demos--examples" class="anchor-link anchor-link__source"><i class="fa-solid fa-link"></i></a>Demos &amp; Examples</h2>
+<blockquote>
+<p>Check out the GitHub repository <a href="https://github.com/bishabosha/scalar-2025">bishabosha/scalar-2025</a> to see and run the following demos.</p>
+</blockquote>
+<p>In preparation for the talk, I wanted to push the boundaries of what's possible with named tuples, here is a short list of what I managed to achieve:</p>
+<ul>
+<li><strong>JSON Conversion:</strong> Dynamically generating JSON serializers and deserializers.
+<pre><code class="language-scala">// chatting with Ollama
+val r = sttp.client4.quick.quickRequest
+  .post(uri&quot;http://localhost:11434/api/chat&quot;)
+  .body(
+    upickle.default.write(
+      (
+        model = &quot;gemma3:4b&quot;,
+        messages = Seq(
+          (
+            role = &quot;user&quot;,
+            content = &quot;write me a haiku about Scala&quot;
+          )
+        ),
+        stream = false,
+      )
+    )
+  )
+  .send()
+
+val msg =
+  upickle.default.read[(message: (content: String))](r.body)
+println(msg.message.content)
+</code></pre>
+</li>
+<li><strong>Chimney-like Transformations:</strong> Converting between different versions of data structures (e.g., to add missing fields).
+<pre><code class="language-scala">// type conversions
+case class UserV1(name: String)
+case class UserV2(name: String, age: Option[Int])
+
+def convert(u1: UserV1): UserV2 =
+  u1.asNamedTuple
+    .withField((age = None))
+    .as[UserV2]
+</code></pre>
+</li>
+<li><strong>Data Frame Operations:</strong> Performing type-safe data analysis operations (similar to Spark).
+<pre><code class="language-scala">val text = &quot;The quick brown fox jumps over the lazy dog&quot;
+val toLower = (_: String).toLowerCase
+val stats = DataFrame
+  .column((words = text.split(&quot;\\s+&quot;)))
+  .withComputed((lowerCase = fun(toLower)(col.words)))
+  .groupBy(col.lowerCase)
+  .agg(group.key ++ (freq = group.size))
+  .sort(col.freq, descending = true)
+
+println(stats.show(Int.MaxValue))
+</code></pre>
+</li>
+<li><strong>SQL Queries:</strong> use a case class as a schema for structural selection of columns
+<pre><code class="language-scala">case class City(
+   id: Int,
+   name: String,
+   countryCode: String,
+   district: String,
+   population: Long
+)
+object City extends Table[City]
+
+val allCities: Seq[City] = db.run(City.select)
+
+// Adding up population of all cities in Poland
+val citiesPop: Long = db.run:
+  City.select
+      .filter(c =&gt; c.countryCode === &quot;POL&quot;)
+      .map(c =&gt; c.population)
+      .sum
+</code></pre>
+</li>
+<li><strong>Full-Stack Web Application:</strong> Building a CRUD application with type-safe endpoints and database interactions.
+<pre><code class="language-scala">type Note =
+  (id: String, title: String, content: String)
+type CreateNote =
+  (title: String, content: String)
+
+trait NoteService derives HttpService:
+  @post(&quot;/api/notes&quot;)
+  def createNote(@body body: CreateNote): Note
+
+  @get(&quot;/api/notes&quot;)
+  def getAllNotes(): Seq[Note]
+
+  @delete(&quot;/api/notes/{id}&quot;)
+  def deleteNote(@path id: String): Unit
+
+val schema =
+  HttpService.endpoints[NoteService]
+
+val app = router(schema)
+
+def routes(db: DB): app.Routes = (
+  createNote = p =&gt; db.run(
+    Note.insert.values(p.body)
+  ),
+  getAllNotes = _ =&gt; db.run(
+    Note.select
+  ),
+  deleteNote = p =&gt; db.run(
+    Note.delete.filter(_.id == p.id)
+  )
+)
+
+val server = app
+  .handle(routes(LogBasedStore()))
+  .listen(port = 8080)
+</code></pre>
+</li>
+</ul>
+<blockquote>
+<p>To get a broader overview and understanding, watch my talk <a href="https://youtu.be/Qeavi9M65Qw">&quot;Going Structural with Named Tuples&quot;</a> from Scalar 2025. Again inspect and learn from the examples in the GitHub repo <a href="https://github.com/bishabosha/scalar-2025">bishabosha/scalar-2025</a>.</p>
+</blockquote>
+</div><div class="container mb-2"><div class="row"><div class="col d-flex"><small><a href="/articles/reviving-pizza.html"><i class="fa-solid fa-angle-left"></i> Coding with Pizza in 2024</a></small></div><div class="col d-flex flex-row-reverse"></div></div></div></article></div></div></div></div><footer class="mt-auto"><div class="footer-copyright text-center py-3"><small>© 2025 Jamie Thompson.<span class="text-muted"> Last published 13/Apr/2025</span></small></div></footer><script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script><script src="/static/js/nav-toc_50380f89e0ac8b1f7a353e494026d8dd.js" type="text/javascript"></script><script src="/static/js/sidebar-mobile_63c21c40d63ae89bd8880d2e1b3dc2c9.js" type="text/javascript"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/highlight.min.js" type="text/javascript"></script><script src="/static/js/hljs-scala3_868eb64187ff110dc72ccc6085774ee9.js" type="text/javascript"></script><script src="/static/js/hljs_a6372cedaa54e6ef1cd502062aef22a1.js" type="text/javascript"></script><script src="/static/js/katex-render_ea5696b3297f767be055588a9afda5ce.js" type="text/javascript"></script><script src="/static/js/admonition_70fb98d2c3c7311ff9783fd7412c7132.js" type="text/javascript"></script></body></html>
