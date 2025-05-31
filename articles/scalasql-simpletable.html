@@ -32,7 +32,8 @@ def results(db: DbApi): Seq[City[Id]] =
 <p>Now the cool part, wearing my Scala geek hat, is that the <code>City</code> class is reused within the query (<code>c</code> is of type <code>City[scalasql.Expr]</code>), and after returning from <code>db.run</code> (no wrapping in this case). It's also nice that this code compiles in both Scala 3 and 2.13.</p>
 <p>The problem, wearing my end-user hat, is that <code>T[_]</code> for every field is a lot of boilerplate to write (ignoring LLM enhanced workflows), and also might be awkward to explain such a type parameter to a programming newbie, or perhaps even an experienced Java developer (&quot;actually it's just higher-kinded data 🤡!&quot;)</p>
 <h2><a href="#introducing-simpletable" id="introducing-simpletable" class="anchor-link anchor-link__source"><i class="fa-solid fa-link"></i></a>Introducing SimpleTable</h2>
-<p>So to address the above problem, the key contribution in ScalaSql 0.1.20 is the <code>SimpleTable</code> class, which the case class' companion object extends. Now the <code>T[_]</code> parameter can be removed:</p>
+<p>So to address the above problem, the key contribution in ScalaSql 0.1.20 is
+an optional maven package <code>com.lihaoyi::scalasql-namedtuples</code>, providing the <code>SimpleTable</code> class, which the companion object should extend. Now the <code>T[_]</code> parameter can be removed:</p>
 <pre><code class="language-diff"> import scalasql.H2Dialect.*
 -import scalasql.*
 +import scalasql.simple.{*, given}
