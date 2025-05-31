@@ -1,0 +1,155 @@
+<!DOCTYPE html><html><head><meta charset="utf-8" /><meta name="Content-Type" content="text/html; charset=utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.css" /><link rel="stylesheet" href="/static/css/style_28d0663040790cd23ff0c2e10c66384d.css" /><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css" crossorigin="anonymous" /><title>Making ScalaSql boring again (with interesting new internals) | bishabosha</title><meta name="description" content="Explaining the motivation for the new SimpleTable feature for the ScalaSql library." /><meta name="twitter:card" content="summary" /><meta name="twitter:title" content="Making ScalaSql boring again (with interesting new internals) | bishabosha" /><meta name="twitter:site" content="@bishabosha" /><meta name="twitter:description" content="Explaining the motivation for the new SimpleTable feature for the ScalaSql library." /><meta name="og:title" content="Making ScalaSql boring again (with interesting new internals) | bishabosha" /><meta name="og:description" content="Explaining the motivation for the new SimpleTable feature for the ScalaSql library." /><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/styles/default.min.css" /><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css" /><script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js" type="text/javascript"></script><link rel="stylesheet" href="/static/css/admonition_972c50a2320249eebf61150270d503dc.css" /></head><body class="d-flex flex-column min-vh-100"><nav class="navbar navbar-expand-md navbar-light fixed-top bg-light"><div class="container-fluid"><a class="navbar-brand navbar-slash" href="/">bishabosha</a><button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button><div class="collapse navbar-collapse" id="navbarSupportedContent"><ul class="navbar-nav me-auto"><li class="nav-item"><a class="nav-link" href="/about/">About</a></li><li class="nav-item"><a class="nav-link active" aria-current="page" href="/articles/">Articles</a></li><li class="nav-item"><a class="nav-link" href="/projects/">Projects</a></li><li class="nav-item"><a class="nav-link" href="/talks/">Talks</a></li></ul></div></div></nav><div class="container"><div class="row"><div class="col-lg-4"><div class="bio-box jumbotron sidebar shadow py-lg-4 py-3 bio-box__top"><div class="bio-main"><table><tr><td class="bio-left"><div class="bio-photo"><img src="/static/img/jamie_thompson_profile.png" alt="photo of bishabosha" class="img-avatar" /></div></td><td class="bio-right"><p><span class="bio-name">Jamie Thompson</span></p></td></tr></table><ul class="list-inline"><li class="list-inline-item"><p class="text-center mb-1"><small><a href="mailto:jamie.thompson@bath.edu" class="bio-link"><i class="fa-solid fa-envelope fa-lg"></i><br />E-Mail</a></small></p></li><li class="list-inline-item"><p class="text-center mb-1"><small><a href="https://github.com/bishabosha" class="bio-link" rel="me"><i class="fa-brands fa-github fa-lg"></i><br />GitHub</a></small></p></li><li class="list-inline-item"><p class="text-center mb-1"><small><a href="https://twitter.com/bishabosha" class="bio-link" rel="me"><i class="fa-brands fa-twitter fa-lg"></i><br />Twitter</a></small></p></li><li class="list-inline-item"><p class="text-center mb-1"><small><a href="https://www.linkedin.com/in/james-richard-thompson/" class="bio-link" rel="me"><i class="fa-brands fa-linkedin fa-lg"></i><br />LinkedIn</a></small></p></li><li class="list-inline-item"><p class="text-center mb-1"><small><a href="https://fosstodon.org/@jrthompson" class="bio-link" rel="me"><i class="fa-brands fa-mastodon fa-lg"></i><br />Mastodon</a></small></p></li></ul><div class="d-none d-sm-none d-lg-block"><hr /><div class="bio-body bio-expand" tabindex="0"><p>Compiler hacker. This is an archive for my thoughts on programming, past and future.</p>
+<p>Also a place to gather all the links.</p>
+<p><a href="https://jamie-thompson-dev.github.io/"><strong>professional enquiries</strong></a>.</p>
+</div></div></div></div><div id="sidebar-anchor" class="sticky-top top-aligned jumbotron sidebar sidebar__mobile shadow py-lg-4 py-3"><div id="sidebar-toggler" class="sidebar_toggle"><i class="fa-regular fa-square-caret-right"></i></div><nav class="toc-nav"><ol class="list-unstyled"><li class="toc-level-1"><a href="#making-scalasql-boring-again-(with-interesting-new-internals).html">Making ScalaSql boring again (with interesting new internals)</a></li><li class="toc-level-2"><a href="#status-quo">Status Quo</a></li><li class="toc-level-2"><a href="#introducing-simpletable">Introducing SimpleTable</a></li><li class="toc-level-2"><a href="#development-and-design">Development and Design</a></li></ol></nav></div></div><div class="col-lg-8"><div class="jumbotron bg-light py-lg-5 py-3"><article><h1 id="making-scalasql-boring-again-(with-interesting-new-internals).html" class="display-5 anchor-link__source">Making ScalaSql boring again (with interesting new internals)</h1><ul class="list-inline mb-2"><li class="list-inline-item"><small><span class="text-muted">Saturday, 31 May 2025</span></small></li><li class="list-inline-item"><small><i class="fa-solid fa-hourglass-start"></i> 7 minute read</small></li><li class="list-inline-item"><small><a href="/articles/"><i class="fa-solid fa-angle-up"></i> all articles</a></small></li></ul><hr /><div class="container mb-2"><div class="row"><div class="col d-flex"><small><a href="/articles/named-tuples.html"><i class="fa-solid fa-angle-left"></i> Scala's New Named Tuples: why you should embrace structural types</a></small></div><div class="col d-flex flex-row-reverse"></div></div></div><div><p>This blog post summarises why I contributed <a href="https://github.com/com-lihaoyi/scalasql/pull/81">SimpleTable</a> to the ScalaSql library, which reduces boilerplate by pushing some complexity into the implementation. (For the impatient: case class definitions for tables no longer require higher kinded type parameters, thanks to the new named tuples feature in Scala 3.7.)</p>
+<h2><a href="#status-quo" id="status-quo" class="anchor-link anchor-link__source"><i class="fa-solid fa-link"></i></a>Status Quo</h2>
+<p><a href="https://github.com/com-lihaoyi/scalasql">ScalaSql</a> is one of the newer query libraries for Scala (first public release January 2024). Its design prioritizes ease of use and simple internals (think &quot;boring&quot;) over performance. I think it does two things particularly well:</p>
+<ul>
+<li>Type safe queries that look like Scala collections operations, but map 1:1 with the specific SQL dialect in use. (i.e. every method call corresponds to a specific SQL fragment, and some dialects have exclusive operations)</li>
+<li>Using a single data structure as the schema for both table queries and also returning results.</li>
+</ul>
+<p>Here is some typical code you might have written in prior versions of ScalaSql, taken from the README:</p>
+<pre><code class="language-scala">import scalasql.H2Dialect.*
+import scalasql.*
+
+case class City[T[_]](
+    id: T[Int],
+    name: T[String],
+    countryCode: T[String],
+    district: T[String],
+    population: T[Long]
+)
+object City extends Table[City]
+
+type Id[T] = T
+def results(db: DbApi): Seq[City[Id]] =
+  db.run(
+    City.select
+        .sortBy(c =&gt; c.population).desc
+        .drop(5).take(3)
+  )
+</code></pre>
+<p>Now the cool part, wearing my Scala geek hat, is that the <code>City</code> class is reused within the query (<code>c</code> is of type <code>City[scalasql.Expr]</code>), and after returning from <code>db.run</code> (no wrapping in this case). It's also nice that this code compiles in both Scala 3 and 2.13.</p>
+<p>The problem, wearing my end-user hat, is that <code>T[_]</code> for every field is a lot of boilerplate to write (ignoring LLM enhanced workflows), and also might be awkward to explain such a type parameter to a programming newbie, or perhaps even an experienced Java developer (&quot;actually it's just higher-kinded data 🤡!&quot;)</p>
+<h2><a href="#introducing-simpletable" id="introducing-simpletable" class="anchor-link anchor-link__source"><i class="fa-solid fa-link"></i></a>Introducing SimpleTable</h2>
+<p>So to address the above problem, the key contribution in ScalaSql 0.1.20 is the <code>SimpleTable</code> class, which the case class' companion object extends. Now the <code>T[_]</code> parameter can be removed:</p>
+<pre><code class="language-diff"> import scalasql.H2Dialect.*
+-import scalasql.*
++import scalasql.simple.{*, given}
+
+-case class City[T[_]](
+-    id: T[Int],
+-    name: T[String],
+-    countryCode: T[String],
+-    district: T[String],
+-    population: T[Long]
+-)
+-object City extends Table[City]
++case class City(
++    id: Int,
++    name: String,
++    countryCode: String,
++    district: String,
++    population: Long
++)
++object City extends SimpleTable[City]
+</code></pre>
+<p>You would also need to delete type arguments to table types wherever they appear.</p>
+<p>The update also comes with support for returning named tuples from queries, so the complete example is as follows:</p>
+<pre><code class="language-scala">//&gt; using dep com.lihaoyi::scalasql-namedtuples:0.1.20
+import scalasql.H2Dialect.*
+import scalasql.simple.{*, given}
+
+case class City(
+    id: Int,
+    name: String,
+    countryCode: String,
+    district: String,
+    population: Long
+)
+object City extends SimpleTable[City]
+
+def results(db: DbApi): Seq[(city: City, pop: Long)] =
+  db.run(
+    City.select
+        .sortBy(c =&gt; c.population).desc
+        .drop(5).take(3)
+        .map(c =&gt; (city = c, pop = c.population))
+  )
+</code></pre>
+<p>So that's it? The code is more boring now? No more cool higher-kinded data? Yes it's better this way (depending on taste of course)</p>
+<blockquote>
+<p>If you're disappointed, or want to scratch an itch, then head to the <a href="#development-and-design">design</a> section to see the implementation based on structural types and named tuples.</p>
+</blockquote>
+<p>So what else has changed? Within queries the <code>City</code> class is no longer used. Instead a new <code>Record</code> class handles wrapping the fields of <code>City</code>. For example hover on <code>c</code> in the <code>sortBy(c =&gt; ...)</code> operation within an IDE, and observe that it has the type <code>Record[City, Expr]</code>. Similarly, if you use an IDE to look for completions on <code>c</code>, you would see fields <code>id: Expr[Int]</code>, <code>name: Expr[String]</code>, etc.</p>
+<p>For the most part, ScalaSql works mostly through type inference, so users migrating to <code>SimpleTable</code> shouldn't need to write these record types explicitly.</p>
+<p>Overall I think it is an easier experience to be the consumer of a well-known type that happens to have a higher kinded argument, than to define one yourself. (i.e. it soon becomes a mnemonic that <code>Record[City, Expr]</code> means a record with the fields of <code>City</code> wrapped in <code>Expr</code>).</p>
+<p>I invite you to please try out the new <code>SimpleTable</code> and named tuple queryable features. Otherwise, read on to learn a bit more about the internals supported by new capabilities provided by the named tuples feature in Scala 3.7.</p>
+<h2><a href="#development-and-design" id="development-and-design" class="anchor-link anchor-link__source"><i class="fa-solid fa-link"></i></a>Development and Design</h2>
+<p>In May 2024, a couple of months after ScalaSql debuted, the <a href="https://www.scala-lang.org/news/3.7.0/#sip-58-named-tuples">named tuples</a> proposal introduced a dedicated compiletime intrinsic to aid with query DSLs: the <code>NamedTuple.From[C]</code> type, which converts a case class type <code>C</code> into a named tuple with the same fields.</p>
+<p>This type is very powerful, because combined with <a href="https://scala-lang.org/files/archive/spec/3.4/03-types.html#match-types">match types</a> you can further transform the fields of a named tuple type, itself derived from a user defined case class, for example to wrap with <code>scalasql.Expr</code>.</p>
+<p>I proposed in my <a href="https://bishabosha.github.io/articles/named-tuples.html">last post</a>
+and at <a href="https://youtu.be/Qeavi9M65Qw">Scalar 2025</a> that the ScalaSql library could and should drop the <code>T[_]</code> parameter, using this feature (combined with <a href="https://www.scala-lang.org/api/3.7.0/docs/docs/reference/other-new-features/named-tuples.html#computed-field-names-1">programmatic structural types</a>). Li Haoyi, the original author of the library, challenged me to actually try if it was possible.</p>
+<p>In the end I managed to deliver a feature entirely self-contained and without changing the core ScalaSql library, with some small compromises.</p>
+<p>I was determined to avoid complex internals so I restricted any metaprogramming purely to type-directed derivation with <code>inline</code>, match types, implicit search, and <code>scala.compiletime</code> intrinsics; avoiding the use of any macros (i.e. no quotes, splices, or quoted reflection API).</p>
+<p><code>SimpleTable[C]</code> itself extends <code>Table</code>, so fits in directly with the existing infrastructure. It needed to provide a type argument compatible with <code>Table</code>'s <code>V[_[_]]</code> (i.e. typically a higher kinded case class.) This type parameter is used in three ways:
+<code>V[Column]</code> for insert/update queries, <code>V[Expr]</code> for select and delete queries, and <code>V[Id]</code> (aka the class <code>C</code> itself) for returning rows.</p>
+<p>This is the final design:</p>
+<pre><code class="language-scala">class SimpleTable[C](
+    using name: sourcecode.Name,
+    metadata0: Table.Metadata[[T[_]] =&gt;&gt; SimpleTable.MapOver[C, T]]
+) extends Table[[T[_]] =&gt;&gt; SimpleTable.MapOver[C, T]](using name, metadata0)
+</code></pre>
+<p>and <code>MapOver</code> is itself a match type that checks if <code>T[_]</code> is the identity type, in which case return <code>C</code> itself, or something that needs to wrap the fields of <code>C</code> in which case return <code>Record[C, T]</code>.</p>
+<pre><code class="language-scala">object SimpleTable {
+  type MapOver[C, T[_]] = T[Internal.Tombstone.type] match {
+    case Internal.Tombstone.type =&gt; C // T is `Sc`
+    case _ =&gt; Record[C, T]
+  }
+}
+</code></pre>
+<p>(<code>Tombstone</code> is used here to try and introduce a unique type that would never be used for any other purpose, i.e. be disjoint in the eyes of the match type resolver - also so we can convince ourselves that if <code>T</code> returns <code>Tombstone</code> it is probably the identity and not some accidental collision.)</p>
+<p>So now the design of <code>Record</code>:</p>
+<ul>
+<li>it should have performance characteristics similar to field selection on a class,</li>
+<li>has to support wrapping fields in an arbitrary type <code>T[_]</code>,</li>
+<li>has to support the use case of nested case classes, in which case the field should be exploded into another record.</li>
+</ul>
+<p>Concretely, <code>Record</code> is a wrapper of an array, with a phantom <code>C</code> type parameter representing the case class it derives from, extending <code>scala.Selectable</code> with a <code>Fields</code> type that can map <code>T[_]</code> over the fields. Its <code>selectDynamic</code> method is inline, reducing to a random access on an array.</p>
+<p>So here is the small compromise - The definition of the nestable class has to opt-in by extending <code>SimpleTable.Nested</code>, so the <code>Fields</code> match type has a marker to know when to explode the fields again.</p>
+<pre><code class="language-scala">object SimpleTable {
+
+  // needs to be a class so the match type reducer can &quot;prove disjoint&quot; to various other types.
+  abstract class Nested
+
+  final class Record[C, T[_]](private val data: IArray[AnyRef]) extends Selectable:
+    /**
+     * For each field `x: X` of class `C` there exists a field `x` in this record of type
+     * `Record[X, T]` if `X` is a case class that represents a table, or `T[X]` otherwise.
+     */
+    type Fields = NamedTuple.Map[
+      NamedTuple.From[C],
+      [X] =&gt;&gt; X match {
+        case SimpleTable.Nested =&gt; Record[X, T]
+        case _ =&gt; T[X]
+      }
+    ]
+
+    def apply(i: Int): AnyRef = data(i)
+
+    inline def selectDynamic(name: String): AnyRef =
+      apply(
+        compiletime.constValue[
+          Record.IndexOf[
+            name.type,
+            Record.Names[C], 0
+          ]
+        ]
+      )
+  }
+}
+</code></pre>
+<p>There is so much more to talk about, such as the various other designs explored, or even the techniques used in the <code>Table.Metadata</code> inline derivation.</p>
+<p>I have expanded upon these threads in <a href="https://github.com/com-lihaoyi/scalasql/pull/81">the pull request</a> adding this feature so I suggest you look there. Perhaps I will write more on the subject.</p>
+<p>Once again please try out the new <code>SimpleTable</code> and named tuple queryable features.</p>
+</div><div class="container mb-2"><div class="row"><div class="col d-flex"><small><a href="/articles/named-tuples.html"><i class="fa-solid fa-angle-left"></i> Scala's New Named Tuples: why you should embrace structural types</a></small></div><div class="col d-flex flex-row-reverse"></div></div></div></article></div></div></div></div><footer class="mt-auto"><div class="footer-copyright text-center py-3"><small>© 2025 Jamie Thompson.<span class="text-muted"> Last published 31/May/2025</span></small></div></footer><script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script><script src="/static/js/nav-toc_50380f89e0ac8b1f7a353e494026d8dd.js" type="text/javascript"></script><script src="/static/js/sidebar-mobile_63c21c40d63ae89bd8880d2e1b3dc2c9.js" type="text/javascript"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/highlight.min.js" type="text/javascript"></script><script src="/static/js/hljs-scala3_868eb64187ff110dc72ccc6085774ee9.js" type="text/javascript"></script><script src="/static/js/hljs_a6372cedaa54e6ef1cd502062aef22a1.js" type="text/javascript"></script><script src="/static/js/katex-render_ea5696b3297f767be055588a9afda5ce.js" type="text/javascript"></script><script src="/static/js/admonition_70fb98d2c3c7311ff9783fd7412c7132.js" type="text/javascript"></script></body></html>
