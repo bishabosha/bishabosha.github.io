@@ -1,162 +1,179 @@
-<!DOCTYPE html><html><head><meta charset="utf-8" /><meta name="Content-Type" content="text/html; charset=utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.css" /><link rel="stylesheet" href="/static/css/style_28d0663040790cd23ff0c2e10c66384d.css" /><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css" crossorigin="anonymous" /><title>Effective Match Types in Scala 3 | bishabosha</title><meta name="description" content="What are Scala 3 match types for and how do they work." /><meta name="twitter:card" content="summary" /><meta name="twitter:title" content="Effective Match Types in Scala 3 | bishabosha" /><meta name="twitter:site" content="@bishabosha" /><meta name="twitter:description" content="What are Scala 3 match types for and how do they work." /><meta name="og:title" content="Effective Match Types in Scala 3 | bishabosha" /><meta name="og:description" content="What are Scala 3 match types for and how do they work." /><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/styles/default.min.css" /><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css" /><script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js" type="text/javascript"></script><link rel="stylesheet" href="/static/css/admonition_972c50a2320249eebf61150270d503dc.css" /></head><body class="d-flex flex-column min-vh-100"><nav class="navbar navbar-expand-md navbar-light fixed-top bg-light"><div class="container-fluid"><a class="navbar-brand navbar-slash" href="/">bishabosha</a><button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button><div class="collapse navbar-collapse" id="navbarSupportedContent"><ul class="navbar-nav me-auto"><li class="nav-item"><a class="nav-link" href="/about/">About</a></li><li class="nav-item"><a class="nav-link active" aria-current="page" href="/articles/">Articles</a></li><li class="nav-item"><a class="nav-link" href="/projects/">Projects</a></li><li class="nav-item"><a class="nav-link" href="/talks/">Talks</a></li></ul></div></div></nav><div class="container"><div class="row"><div class="col-lg-4"><div class="bio-box jumbotron sidebar shadow py-lg-4 py-3 bio-box__top"><div class="bio-main"><table><tr><td class="bio-left"><div class="bio-photo"><img src="/static/img/jamie_thompson_profile.png" alt="photo of bishabosha" class="img-avatar" /></div></td><td class="bio-right"><p><span class="bio-name">Jamie Thompson</span></p></td></tr></table><ul class="list-inline"><li class="list-inline-item"><p class="text-center mb-1"><small><a href="mailto:jamie.thompson@bath.edu" class="bio-link"><i class="fa-solid fa-envelope fa-lg"></i><br />E-Mail</a></small></p></li><li class="list-inline-item"><p class="text-center mb-1"><small><a href="https://github.com/bishabosha" class="bio-link" rel="me"><i class="fa-brands fa-github fa-lg"></i><br />GitHub</a></small></p></li><li class="list-inline-item"><p class="text-center mb-1"><small><a href="https://twitter.com/bishabosha" class="bio-link" rel="me"><i class="fa-brands fa-twitter fa-lg"></i><br />Twitter</a></small></p></li><li class="list-inline-item"><p class="text-center mb-1"><small><a href="https://www.linkedin.com/in/james-richard-thompson/" class="bio-link" rel="me"><i class="fa-brands fa-linkedin fa-lg"></i><br />LinkedIn</a></small></p></li><li class="list-inline-item"><p class="text-center mb-1"><small><a href="https://fosstodon.org/@jrthompson" class="bio-link" rel="me"><i class="fa-brands fa-mastodon fa-lg"></i><br />Mastodon</a></small></p></li></ul><div class="d-none d-sm-none d-lg-block"><hr /><div class="bio-body bio-expand" tabindex="0"><p>Compiler hacker. This is an archive for my thoughts on programming, past and future.</p>
+<!DOCTYPE html><html><head><meta charset="utf-8" /><meta name="Content-Type" content="text/html; charset=utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.css" /><link rel="stylesheet" href="/static/css/style_16e6c4b812281157c6db58e9728a270c.css" /><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css" crossorigin="anonymous" /><title>Understanding Match Types in Scala 3 | bishabosha</title><meta name="description" content="What are Scala 3 match types for and how do they work." /><meta name="twitter:card" content="summary" /><meta name="twitter:title" content="Understanding Match Types in Scala 3 | bishabosha" /><meta name="twitter:site" content="@bishabosha" /><meta name="twitter:description" content="What are Scala 3 match types for and how do they work." /><meta name="og:title" content="Understanding Match Types in Scala 3 | bishabosha" /><meta name="og:description" content="What are Scala 3 match types for and how do they work." /><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/styles/default.min.css" /><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css" /><script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js" type="text/javascript"></script><link rel="stylesheet" href="/static/css/admonition_972c50a2320249eebf61150270d503dc.css" /></head><body class="d-flex flex-column min-vh-100"><div id="sidebar-expander" class="sidebar_expander"><i class="fa-regular fa-square-caret-right"></i></div><nav class="navbar navbar-expand-md navbar-light fixed-top bg-light"><div class="container-fluid"><a class="navbar-brand navbar-slash" href="/">bishabosha</a><button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button><div class="collapse navbar-collapse" id="navbarSupportedContent"><ul class="navbar-nav me-auto"><li class="nav-item"><a class="nav-link" href="/about/">About</a></li><li class="nav-item"><a class="nav-link active" aria-current="page" href="/articles/">Articles</a></li><li class="nav-item"><a class="nav-link" href="/projects/">Projects</a></li><li class="nav-item"><a class="nav-link" href="/talks/">Talks</a></li></ul></div></div></nav><div class="container"><div class="row"><div class="col-lg-4"><div class="bio-box jumbotron sidebar shadow py-lg-4 py-3 bio-box__top"><div class="bio-main"><table><tr><td class="bio-left"><div class="bio-photo"><img src="/static/img/jamie_thompson_profile.png" alt="photo of bishabosha" class="img-avatar" /></div></td><td class="bio-right"><p><span class="bio-name">Jamie Thompson</span></p></td></tr></table><ul class="list-inline"><li class="list-inline-item"><p class="text-center mb-1"><small><a href="mailto:jamie.thompson@bath.edu" class="bio-link"><i class="fa-solid fa-envelope fa-lg"></i><br />E-Mail</a></small></p></li><li class="list-inline-item"><p class="text-center mb-1"><small><a href="https://github.com/bishabosha" class="bio-link" rel="me"><i class="fa-brands fa-github fa-lg"></i><br />GitHub</a></small></p></li><li class="list-inline-item"><p class="text-center mb-1"><small><a href="https://twitter.com/bishabosha" class="bio-link" rel="me"><i class="fa-brands fa-twitter fa-lg"></i><br />Twitter</a></small></p></li><li class="list-inline-item"><p class="text-center mb-1"><small><a href="https://www.linkedin.com/in/james-richard-thompson/" class="bio-link" rel="me"><i class="fa-brands fa-linkedin fa-lg"></i><br />LinkedIn</a></small></p></li><li class="list-inline-item"><p class="text-center mb-1"><small><a href="https://fosstodon.org/@jrthompson" class="bio-link" rel="me"><i class="fa-brands fa-mastodon fa-lg"></i><br />Mastodon</a></small></p></li></ul><div class="d-none d-sm-none d-lg-block"><hr /><div class="bio-body bio-expand" tabindex="0"><p>Compiler hacker. This is an archive for my thoughts on programming, past and future.</p>
 <p>Also a place to gather all the links.</p>
 <p><a href="https://jamie-thompson-dev.github.io/"><strong>professional enquiries</strong></a>.</p>
-</div></div></div></div><div id="sidebar-anchor" class="sticky-top top-aligned jumbotron sidebar sidebar__mobile shadow py-lg-4 py-3"><div id="sidebar-toggler" class="sidebar_toggle"><i class="fa-regular fa-square-caret-right"></i></div><nav class="toc-nav"><ol class="list-unstyled"><li class="toc-level-1"><a href="#effective-match-types-in-scala-3.html">Effective Match Types in Scala 3</a></li><li class="toc-level-2"><a href="#expressive-vs-safe-pick-two">Expressive vs Safe (Pick Two)</a></li><li class="toc-level-2"><a href="#scala-is-expressive-and-safe">Scala is Expressive and Safe</a></li><li class="toc-level-2"><a href="#example-1-type-safe-routing">Example 1: Type-Safe Routing</a></li><li class="toc-level-2"><a href="#what-are-match-types">What Are Match Types?</a></li><li class="toc-level-2"><a href="#built-in-compile-time-operations">Built-in Compile-Time Operations</a></li><li class="toc-level-2"><a href="#example-2-refined-types">Example 2: Refined Types</a></li><li class="toc-level-2"><a href="#example-3-type-safe-regex">Example 3: Type-Safe Regex</a></li><li class="toc-level-2"><a href="#example-4-database-queries-scalasql">Example 4: Database Queries (ScalaSQL)</a></li><li class="toc-level-2"><a href="#example-5-dataframes">Example 5: DataFrames</a></li><li class="toc-level-2"><a href="#tips-and-pitfalls">Tips and Pitfalls</a></li><li class="toc-level-2"><a href="#conclusion">Conclusion</a></li></ol></nav></div></div><div class="col-lg-8"><div class="jumbotron bg-light py-lg-5 py-3"><article><h1 id="effective-match-types-in-scala-3.html" class="display-5 anchor-link__source">Effective Match Types in Scala 3</h1><ul class="list-inline mb-2"><li class="list-inline-item"><small><span class="text-muted">Tuesday, 26 August 2025</span></small></li><li class="list-inline-item"><small><i class="fa-solid fa-hourglass-start"></i> 5 minute read</small></li><li class="list-inline-item"><small><a href="/articles/"><i class="fa-solid fa-angle-up"></i> all articles</a></small></li></ul><hr /><div class="container mb-2"><div class="row"><div class="col d-flex"><small><a href="/articles/scalasql-simpletable.html"><i class="fa-solid fa-angle-left"></i> Making ScalaSql boring again (with interesting new internals)</a></small></div><div class="col d-flex flex-row-reverse"></div></div></div><div><p>Scala 3 introduced <a href="https://www.scala-lang.org/api/3.7.2/docs/new-types/match-types.html"><strong>match types</strong></a>, a powerful feature enabling to perform computations with types at compile time. This post explores the motivation behind match types, how they work, and how you can use them effectively in your own projects. Along the way, I’ll show examples from my <a href="https://github.com/bishabosha/scaladays-2025">ScalaDays 2025 demo repo</a>.</p>
+</div></div></div></div><div id="sidebar-anchor" class="sticky-top top-aligned jumbotron sidebar sidebar__mobile shadow py-lg-4 py-3"><div id="sidebar-toggler" class="sidebar_toggle"><i class="fa-regular fa-square-caret-right"></i></div><div id="toc-toggler" class="toc_toggle"><i class="fa-regular fa-square-caret-down"></i></div><nav class="toc-nav"><ol class="list-unstyled"><li class="toc-level-1"><a href="#understanding-match-types-in-scala-3.html">Understanding Match Types in Scala 3</a></li><li class="toc-level-2"><a href="#what-are-match-types">What are Match Types?</a></li><li class="toc-level-2"><a href="#example-use-cases">Example Use Cases</a></li><li class="toc-level-3"><a href="#type-safe-routing">Type-Safe Routing</a></li><li class="toc-level-3"><a href="#refined-types">Refined types</a></li><li class="toc-level-3"><a href="#lenses-for-form-data">Lenses for Form Data</a></li><li class="toc-level-2"><a href="#the-rules">The Rules</a></li><li class="toc-level-3"><a href="#subtype-checking">Subtype Checking</a></li><li class="toc-level-3"><a href="#disjointness-checking">Disjointness Checking</a></li><li class="toc-level-3"><a href="#dependent-methods">Dependent Methods</a></li><li class="toc-level-3"><a href="#more-disjointness-examples">More Disjointness Examples</a></li><li class="toc-level-3"><a href="#recursive-match-types">Recursive Match Types</a></li><li class="toc-level-2"><a href="#built-in-compile-time-operations">Built-in Compile-Time Operations</a></li><li class="toc-level-2"><a href="#summary-and-remarks">Summary and Remarks</a></li></ol></nav></div></div><div class="col-lg-8 main-content"><div class="jumbotron bg-light py-lg-5 py-3"><article><h1 id="understanding-match-types-in-scala-3.html" class="display-5 anchor-link__source">Understanding Match Types in Scala 3</h1><ul class="list-inline mb-2"><li class="list-inline-item"><small><span class="text-muted">Saturday, 30 August 2025</span></small></li><li class="list-inline-item"><small><i class="fa-solid fa-hourglass-start"></i> 7 minute read</small></li><li class="list-inline-item"><small><a href="/articles/"><i class="fa-solid fa-angle-up"></i> all articles</a></small></li></ul><hr /><div class="container mb-2"><div class="row"><div class="col d-flex"><small><a href="/articles/scalasql-simpletable.html"><i class="fa-solid fa-angle-left"></i> Making ScalaSql boring again (with interesting new internals)</a></small></div><div class="col d-flex flex-row-reverse"></div></div></div><div><p>Scala 3 introduced <a href="https://www.scala-lang.org/api/3.7.2/docs/new-types/match-types.html">match types</a>, a powerful feature enabling to perform computations with types at compile time, a technique known as type-level programming. This post gives an overview of how they work, and what kinds of use cases they can be applied to.</p>
+<blockquote>
+<p>This post mirrors my talk from ScalaDays 2025. Explore code examples in the <a href="https://github.com/bishabosha/scaladays-2025">demo repo</a>. Also try out the <a href="/match-type-simulator/">interactive demo</a>.</p>
+</blockquote>
+<h2><a href="#what-are-match-types" id="what-are-match-types" class="anchor-link anchor-link__source"><i class="fa-solid fa-link"></i></a>What are Match Types?</h2>
+<p>To assist with my presentation at ScalaDays 2025, I developed a <a href="/match-type-simulator/">match type simulator</a> to explain the rules of match types in a visual way. I will use it in the rest of this post also:</p>
+<p>The most basic form of a match type is <code>T match { case P[x] =&gt; U }</code>, which can appear on the right-hand side of a type alias, a type lambda, or even standalone.
+By form, they look very similar to a pattern match on values,
+except the pattern scrutinee is a type, and each case pattern and body are types.</p>
+<p>Let's begin with the identity match type:</p>
+<iframe src="/match-type-simulator/?embed=true&tab=match-types&example=Identity&stamp=198f8888779" width="100%" height="275px"></iframe>
+<p>Try to run the simulation with various Scala types as arguments (e.g. <code>String</code>, <code>List[Int]</code>, etc.)</p>
+<p>Observe that whatever argument you pass to the match type, the result type is the same as the argument type, which makes sense as the only pattern <code>case T =&gt; T</code> is to match directly on the scrutinee itself.</p>
 <hr />
-<h2><a href="#expressive-vs-safe-pick-two" id="expressive-vs-safe-pick-two" class="anchor-link anchor-link__source"><i class="fa-solid fa-link"></i></a>Expressive vs Safe (Pick Two)</h2>
-<p>There’s a long-running debate in programming language design: can a language be both <strong>expressive</strong> and <strong>safe</strong>?</p>
-<ul>
-<li><strong>Expressive</strong> means you can write concise, flexible code that feels natural.</li>
-<li><strong>Safe</strong> means the compiler prevents whole classes of errors before your program even runs.</li>
-</ul>
-<p>Traditionally, you had to pick one:</p>
-<ul>
-<li><strong>Static types = safety</strong>: stronger contracts, compile-time invariants, safer refactoring, less defensive programming.</li>
-<li><strong>Dynamic types = expressiveness</strong>: less ceremony, APIs that feel lightweight, but with the risk of runtime errors.</li>
-</ul>
-<p>This tension shows up everywhere. For example:</p>
-<ul>
-<li>The U.S. government’s <a href="https://bidenwhitehouse.archives.gov/oncd/briefing-room/2024/02/26/press-release-technical-report/">2024 ONCD report</a> recommended “rewrite it in Rust” to achieve memory safety.</li>
-<li>Jane Street’s 2008 paper <em>Caml Trading – Experiences with Functional Programming on Wall Street</em> popularized the maxim <em>“make illegal states unrepresentable”</em> (<a href="https://doi.org/10.1017/S095679680800676X">Minsky &amp; Weeks, 2008</a>).</li>
-<li>Alexis King’s 2019 blog post <a href="https://lexi-lambda.github.io/blog/2019/11/05/parse-don-t-validate/"><em>Parse, don’t validate</em></a> argued for pushing validation into the type system.</li>
-</ul>
-<p>The common theme: <strong>prevent runtime errors by lifting more information into types</strong>.</p>
-<p>But critics of static typing often complain about verbosity, or “fighting the typechecker.” Meanwhile, dynamic languages like Ruby or Elixir feel wonderfully expressive, but fragile.</p>
-<p>So where does Scala fit?</p>
-<hr />
-<h2><a href="#scala-is-expressive-and-safe" id="scala-is-expressive-and-safe" class="anchor-link anchor-link__source"><i class="fa-solid fa-link"></i></a>Scala is Expressive and Safe</h2>
-<p>Scala’s type system is unusually powerful. It lets us write APIs that <em>feel</em> dynamic, but are still statically checked.</p>
-<p><strong>Match types</strong> are one of the key tools that make this possible. They let us compute types from values, so we can design APIs that are both expressive and safe.</p>
-<hr />
-<h2><a href="#example-1-type-safe-routing" id="example-1-type-safe-routing" class="anchor-link anchor-link__source"><i class="fa-solid fa-link"></i></a>Example 1: Type-Safe Routing</h2>
-<p>Let’s compare a simple HTTP route in Ruby’s Sinatra with a Scala version.</p>
-<p><strong>Ruby (dynamic):</strong></p>
-<pre><code class="language-ruby">get '/hello/:name' do
-  &quot;Hello #{params['name']}!&quot;
-end
-</code></pre>
-<p>This is expressive, but not safe. The <code>params</code> dictionary is dynamic — if you mistype <code>&quot;name&quot;</code>, you’ll only find out at runtime.</p>
-<p><strong>Scala (with match types):</strong></p>
-<pre><code class="language-scala">http.get(&quot;/hello/:name&quot;).in:
+<h2><a href="#example-use-cases" id="example-use-cases" class="anchor-link anchor-link__source"><i class="fa-solid fa-link"></i></a>Example Use Cases</h2>
+<p>There are a lot more examples in my <a href="https://speakerdeck.com/bishabosha/effective-match-types-scala-days-2025">slides</a>, but I will just highlight three use cases that demonstrate different domains of expressive power.</p>
+<h3><a href="#type-safe-routing" id="type-safe-routing" class="anchor-link anchor-link__source"><i class="fa-solid fa-link"></i></a>Type-Safe Routing</h3>
+<pre><code class="language-scala">http get &quot;/hello/:name&quot; in:
   s&quot;Hello ${params.name}!&quot;
+http get &quot;/posts/?:title&amp;:author&quot; in:
+  search(title = params.title, author = params.author)
 </code></pre>
-<p>Here, the <code>params</code> object is <strong>type-safe</strong>. The compiler knows that <code>params</code> has a <code>name: String</code> field, because the route pattern <code>&quot;/hello/:name&quot;</code> is parsed at the type level. If you mistype <code>params.nam</code>, the compiler will catch it.</p>
-<p>👉 In the <a href="https://github.com/bishabosha/scaladays-2025/tree/main/src/main/scala/http">demo repo</a>, you can see how this works:</p>
-<ul>
-<li>The route string is captured as a <strong>singleton type</strong>.</li>
-<li>A <strong>match type</strong> (<code>ParamsOf</code>) parses the string and extracts parameter names.</li>
-<li>The result is a <strong>structural type</strong> like <code>(name: String)</code>.</li>
-</ul>
-<p>This is a great example of how match types let you write APIs that are both expressive and safe.</p>
+<blockquote>
+<p>Check out the full example in the <a href="https://github.com/bishabosha/scaladays-2025/blob/main/sinatra/sinatra-demo.scala">demo repo</a>.</p>
+</blockquote>
+<p>The above example uses a match type to parse the route string and extract a structural type for <code>params</code>, e.g. <code>(name: String)</code>, or <code>(title: Seq[String], author: Seq[String])</code>. This increases type safety because parameters can not be misspelled.</p>
+<h3><a href="#refined-types" id="refined-types" class="anchor-link anchor-link__source"><i class="fa-solid fa-link"></i></a>Refined types</h3>
+<pre><code class="language-scala">val one: Int Refined AtLeast[0] = 1 // ok
+val fail: String Refined MaxChars[8] = &quot;123456789&quot; // error
+</code></pre>
+<blockquote>
+<p>Check out the full example in the <a href="https://github.com/bishabosha/scaladays-2025/blob/main/refined-types/refined-demo.scala">demo repo</a>.</p>
+</blockquote>
+<p>The <code>Refined</code> type provides an implicit conversion for literal types, if it can prove that a match type predicate such as <code>AtLeast[0]</code> reduces to the the literal type <code>true</code> when applied to the singleton type of the argument. This is useful for example to require constant strings that have a length limit.</p>
+<h3><a href="#lenses-for-form-data" id="lenses-for-form-data" class="anchor-link anchor-link__source"><i class="fa-solid fa-link"></i></a>Lenses for Form Data</h3>
+<pre><code class="language-scala">case class Form(name: String, city: String)
+
+val formVar = VarLenses(Form(&quot;&quot;, &quot;&quot;))
+
+def cityField = p(
+  label(&quot;City: &quot;),
+  input(
+    placeholder(&quot;Lausanne&quot;),
+    controlled(
+      value &lt;-- formVar.city.view,
+      onInput.mapToValue --&gt; formVar.city.updater
+    )
+  )
+)
+</code></pre>
+<blockquote>
+<p>Check out the full example in the <a href="https://github.com/bishabosha/scaladays-2025/blob/main/laminar-form/demo.scala">demo repo</a>.</p>
+</blockquote>
+<p>For use with <a href="https://laminar.dev">Laminar</a>,
+the <code>VarLenses</code> class reads the structure of any case class, and provides a typed pair of <code>view</code> and <code>updater</code> for each field. This is useful because multiple reactive fields can be controlled from a single place.</p>
 <hr />
-<h2><a href="#what-are-match-types" id="what-are-match-types" class="anchor-link anchor-link__source"><i class="fa-solid fa-link"></i></a>What Are Match Types?</h2>
-<p>A match type is like a type-level <code>match</code> expression:</p>
-<pre><code class="language-scala">type Elem[X] = X match
-  case String   =&gt; Char
-  case Array[t] =&gt; t
-</code></pre>
-<p>Here, <code>Elem[String]</code> reduces to <code>Char</code>, and <code>Elem[Array[Int]]</code> reduces to <code>Int</code>.</p>
-<p>They’re a way of <strong>pattern matching on types</strong> and producing new types. This makes them a natural fit for generic programming, type-level parsing, and enforcing invariants.</p>
+<h2><a href="#the-rules" id="the-rules" class="anchor-link anchor-link__source"><i class="fa-solid fa-link"></i></a>The Rules</h2>
+<h3><a href="#subtype-checking" id="subtype-checking" class="anchor-link anchor-link__source"><i class="fa-solid fa-link"></i></a>Subtype Checking</h3>
+<p>The match type reducer works by checking if the scrutinee type (<code>T</code>) is a subtype of any of the pattern cases. If it is, then the case will match, and any wildcard type arguments will be instantiated before reducing to the right-hand side of the case.</p>
+<iframe src="/match-type-simulator/?embed=true&tab=match-types&example=Tuple+Unpack&stamp=198f8888779" width="100%" height="330px"></iframe>
+<p>In the example above, the <code>Tag[x]</code> and <code>Tag[y]</code> patterns will match both <code>ITag.type</code> and <code>STag.type</code> because they are both subtypes of the <code>Tag</code> class, and in the bindings you will see that the type argument <code>x</code> is instantiated to <code>Int</code> for <code>ITag.type</code> and <code>y</code> to <code>String</code> for <code>STag.type</code>.</p>
+<hr />
+<h3><a href="#disjointness-checking" id="disjointness-checking" class="anchor-link anchor-link__source"><i class="fa-solid fa-link"></i></a>Disjointness Checking</h3>
+<p>Ok, how about multiple patterns? The match type reducer attempts to check the scrutinee type against each pattern case <strong>in sequence</strong>. If the first pattern is <strong>not</strong> a subtype of the scrutinee, then the reducer will check the next pattern, and so on.</p>
+<iframe src="/match-type-simulator/?embed=true&tab=match-types&custom=true&name=Custom%20Match%20Type&invocation=Elem%5BFuture%5BInt%5D%5D&cases=case%20String%20%3D%3E%20Char%0Acase%20Seq%5Bx%5D%20%3D%3E%20x%0Acase%20Option%5Bx%5D%20%3D%3E%20x&th=86e712d2&showDisjointnessSteps=true&stamp=198f8888779" width="100%" height="335px"></iframe>
+<p>Working through the <code>Elem[Future[Int]]</code> example:</p>
+<ol>
+<li>First check that <code>Future[Int]</code> is a subtype of <code>String</code>.</li>
+<li>This fails, so the type checker will try to move on to the next pattern. However it must first check that it is safe to do so by checking for <strong>&quot;provable disjointness&quot;</strong> between the pattern and the scrutinee type.</li>
+<li><code>Future[Int]</code> is definitely disjoint from <code>String</code> because <code>String</code> is a final class, therefore there is no risk that some possible instantiation of <code>Future[Int]</code> is also a <code>String</code>.</li>
+<li>Check that <code>Future[Int]</code> is a subtype of <code>Seq[x]</code>.</li>
+<li>This fails, so check that <code>Future[Int]</code> is <strong>provably disjoint</strong> from <code>Seq[x]</code>.</li>
+<li>Disjointness check fails =&gt; stop reduction.</li>
+</ol>
+<p>Disjointness ensures that even though the pattern does not match, there could be <strong>no chance</strong> that a value of the same static type as the scrutinee has a more precise dynamic type that would actually match the pattern.</p>
+<p>Why is <code>Future[Int]</code> not disjoint from <code>Seq[x]</code>? because both <code>Future</code> and <code>Seq</code> are traits, meaning that there could be a hypothetical class <code>FutureSeq[T]</code> that extends both <code>Future</code> and <code>Seq</code> 🤯.</p>
+<blockquote>
+<p>Hint: try <code>Elem[List[Int]]</code> or <code>Elem[Some[String]]</code> and observe how it changes the behavior.</p>
+</blockquote>
+<hr />
+<h3><a href="#dependent-methods" id="dependent-methods" class="anchor-link anchor-link__source"><i class="fa-solid fa-link"></i></a>Dependent Methods</h3>
+<p>Why is the disjointness check important? It's because when a match type is used as the result type of a method, the typechecker uses a special dependent-typing mode, for example:</p>
+<iframe src="/match-type-simulator/?embed=true&tab=match-types&custom=true&name=Custom%20Match%20Type&invocation=Elem%5BFuture%5BInt%5D%5D&cases=case%20String%20%3D%3E%20Char%0Acase%20Seq%5Bx%5D%20%3D%3E%20x%0Acase%20Option%5Bx%5D%20%3D%3E%20x&th=86e712d2&showDependentMethod=true&hideTimeline=true&stamp=198f888877a" width="100%" height="350px"></iframe>
+<p>The rule for this mode is so rigid that the method can be mechanically generated from the match type's definition (try interacting with the pattern cases and see yourself 🤓).</p>
+<p>The method must take the shape of a pattern match, where each case is a <strong>typed pattern</strong> (i.e. where each pattern is identical to the corresponding pattern in the match type).</p>
+<p>What is special is that within the body of a case, the typechecker expects the same type as the body of the corresponding case in the match type.</p>
+<p>In order for dependent methods to be sound, match types must reduce in a way that is <strong>consistent with the runtime type checking</strong>.</p>
+<p>Therefore if you consider the method <code>elem</code>, if the parameter <code>t</code> is some value of a hypothetical class <code>FutureSeq[T]</code> extending both <code>Future</code> and <code>Seq</code>, then it would match the <code>Seq</code> case.</p>
+<p>For this exact reason, match types are conservative, and if disjointness can not be proved, the match type remains unreduced. (This is not always an error, only if the use site requires a more precise type).</p>
+<hr />
+<h3><a href="#more-disjointness-examples" id="more-disjointness-examples" class="anchor-link anchor-link__source"><i class="fa-solid fa-link"></i></a>More Disjointness Examples</h3>
+<p>According to the <a href="https://scala-lang.org/files/archive/spec/3.4/03-types.html#match-types">Scala 3 language specification</a>, provable disjointness can be intuitively understood by knowing the following properties of Scala's type system:</p>
+<blockquote>
+<ul>
+<li>Single inheritance of classes</li>
+<li>Final classes cannot be extended</li>
+<li>Sealed traits have a known set of direct children</li>
+<li>Constant types with distinct values are nonintersecting</li>
+<li>Singleton paths to distinct enum case values are nonintersecting</li>
+</ul>
+</blockquote>
+<p>Here are some examples that demonstrate these properties:</p>
+<blockquote>
+<p>Hint: try changing the types in any of the examples.</p>
+</blockquote>
+<iframe src="/match-type-simulator/?embed=true&tab=disjointness&example=Abstract+Type+vs+Concrete&stamp=198f888877a" width="100%" height="180px"></iframe>
+<iframe src="/match-type-simulator/?embed=true&tab=disjointness&example=Two+Traits&stamp=198f888877a" width="100%" height="200px"></iframe>
+<iframe src="/match-type-simulator/?embed=true&tab=disjointness&example=Trait+vs+Class&stamp=198f888877a" width="100%" height="215px"></iframe>
+<iframe src="/match-type-simulator/?embed=true&tab=disjointness&example=Trait+vs+Final+Class&stamp=198f888877a" width="100%" height="200px"></iframe>
+<iframe src="/match-type-simulator/?embed=true&tab=disjointness&example=Trait+vs+Object&stamp=198f888877a" width="100%" height="180px"></iframe>
+<iframe src="/match-type-simulator/?embed=true&tab=disjointness&example=Sealed+Trait+vs+Class&stamp=198f888877a" width="100%" height="200px"></iframe>
+<iframe src="/match-type-simulator/?embed=true&tab=disjointness&example=Two+Unrelated+Classes&stamp=198f888877a" width="100%" height="180px"></iframe>
+<blockquote>
+<p>Hint: try changing the types in any of the examples above.</p>
+</blockquote>
+<hr />
+<h3><a href="#recursive-match-types" id="recursive-match-types" class="anchor-link anchor-link__source"><i class="fa-solid fa-link"></i></a>Recursive Match Types</h3>
+<p>A last demonstration of the capabilities of match types is the ability to express recursive types.
+With recursion, you can compute true algorithms over types. For example, we can compute the last element of a tuple:</p>
+<iframe src="/match-type-simulator/?embed=true&tab=match-types&example=Last+Tuple+Element&stamp=198f888877a" width="100%" height="360px"></iframe>
+<p>Recursion is the key to most useful match types - for example it is used in the <a href="#type-safe-routing">Type Safe Routing</a> example to traverse each character of a path string.</p>
 <hr />
 <h2><a href="#built-in-compile-time-operations" id="built-in-compile-time-operations" class="anchor-link anchor-link__source"><i class="fa-solid fa-link"></i></a>Built-in Compile-Time Operations</h2>
-<p>Scala 3 comes with a set of <strong>compile-time operations</strong> implemented as match types:</p>
-<pre><code class="language-scala">import scala.compiletime.ops.int.*
+<p>Scala 3 comes with a set intrinsic match types known as <strong>compile-time operations</strong>, living in the <code>scala.compiletime.ops</code> package.</p>
+<pre><code class="language-scala">import scala.compiletime.ops.any.*
 import scala.compiletime.ops.string.*
+import scala.compiletime.ops.int.*
+import scala.compiletime.ops.boolean.*
 
-val n: 23 match { case S[x] =&gt; x } = 22
-val eq: (64 == 128) = false
-val s: &quot;sca&quot; + &quot;la&quot; = &quot;scala&quot;
-val sub: Substring[&quot;scala&quot;, 3, 5] = &quot;la&quot;
+(23 match {case S[n] =&gt; n}) =:= 22
+(64 == 128)                 =:= false
+(&quot;sca&quot; + &quot;la&quot;)              =:= &quot;scala&quot;
+Substring[&quot;scala&quot;, 3, 5]    =:= &quot;la&quot;
+CharAt[&quot;scala&quot;, 1]          =:= 'c'
+Length[&quot;scala&quot;]             =:= 5
 </code></pre>
-<p>These are efficient, compiler-supported match types for numbers, strings, booleans, and tuples. They’re the building blocks for more advanced type-level programming.</p>
-<hr />
-<h2><a href="#example-2-refined-types" id="example-2-refined-types" class="anchor-link anchor-link__source"><i class="fa-solid fa-link"></i></a>Example 2: Refined Types</h2>
-<p>Another use case is <strong>refined types</strong> — types that enforce constraints at compile time.</p>
-<p>From the repo:</p>
-<pre><code class="language-scala">infix opaque type Refined[A, F[_ &lt;: A] &lt;: Boolean] &lt;: A = A
-
-type Positive[A &lt;: Int] &lt;: Boolean = A match
-  case S[?] =&gt; true
-  case _    =&gt; false
-
-val one: Int Refined Positive = 1
-val small: String Refined MaxChars[8] = &quot;123456789&quot; // compile error
-</code></pre>
-<p>Here, <code>Positive</code> is a match type that checks whether an integer is greater than zero. If you try to assign a negative number, the compiler rejects it. Similarly, <code>MaxChars[8]</code> enforces a maximum string length.</p>
-<p>This is a lightweight way to get the benefits of libraries like <a href="https://github.com/fthomas/refined">refined</a>, but with just a few lines of code.</p>
-<hr />
-<h2><a href="#example-3-type-safe-regex" id="example-3-type-safe-regex" class="anchor-link anchor-link__source"><i class="fa-solid fa-link"></i></a>Example 3: Type-Safe Regex</h2>
-<p>Regexes are notoriously unsafe — you often get back an <code>Option[Match]</code> and have to remember which group is which. With match types, you can do better.</p>
-<p>From the repo:</p>
-<pre><code class="language-scala">import regsafe.*
-
-val rational = Regex(&quot;&quot;&quot;(\d+)(?:\.(\d+))?&quot;&quot;&quot;)
-
-rational.unapply(&quot;3.1415&quot;).get ==&gt; (&quot;3&quot;,  Some(&quot;1415&quot;))
-rational.unapply(&quot;23&quot;).get     ==&gt; (&quot;23&quot;, None)
-</code></pre>
-<p>The type of <code>rational.unapply</code> is:</p>
-<pre><code class="language-scala">Option[(String, Option[String])]
-</code></pre>
-<p>That’s inferred <strong>statically</strong> from the regex pattern. The compiler knows that the second group is optional, so you can’t accidentally forget to handle it.</p>
-<hr />
-<h2><a href="#example-4-database-queries-scalasql" id="example-4-database-queries-scalasql" class="anchor-link anchor-link__source"><i class="fa-solid fa-link"></i></a>Example 4: Database Queries (ScalaSQL)</h2>
-<p>In <a href="https://github.com/com-lihaoyi/scalasql">ScalaSQL</a>, match types are used to represent rows as structural records.</p>
-<pre><code class="language-scala">case class City(
-  id: Int,
-  name: String,
-  countryCode: String,
-  district: String,
-  population: Long
-)
-object City extends SimpleTable[City]
-
-val fewLargestCities: Seq[City] = db.run(
-  City.select
-      .sortBy(c =&gt; c.population).desc
-      .drop(5).take(3)
-)
-</code></pre>
-<p>Inside a query, <code>City</code> is represented as a <code>Record[City, Expr]</code>, where each field is wrapped in an <code>Expr</code>. For example:</p>
-<pre><code class="language-scala">c.population: Expr[Long]
-c.name: Expr[String]
-</code></pre>
-<p>This is powered by a match type that maps over the fields of the case class, wrapping each one in <code>Expr</code>.</p>
-<hr />
-<h2><a href="#example-5-dataframes" id="example-5-dataframes" class="anchor-link anchor-link__source"><i class="fa-solid fa-link"></i></a>Example 5: DataFrames</h2>
-<p>Finally, the repo shows a <strong>DataFrame</strong> API with structurally typed columns:</p>
-<pre><code class="language-scala">val stats = DataFrame
-  .column((words = text.split(&quot;\\s+&quot;)))
-  .withComputed(
-    (lowerCase = fun(_.toLowerCase)(col.words))
-  )
-  .groupBy(col.lowerCase)
-  .aggregate(
-    group.key ++ (freq = group.size)
-  )
-  .sort(col.freq, descending = true)
-</code></pre>
-<p>The type of the resulting DataFrame is:</p>
-<pre><code class="language-scala">DataFrame[(lowerCase: String, freq: Int)]
-</code></pre>
-<p>That means the compiler knows exactly which columns exist after each transformation. No more runtime “column not found” errors.</p>
-<hr />
-<h2><a href="#tips-and-pitfalls" id="tips-and-pitfalls" class="anchor-link anchor-link__source"><i class="fa-solid fa-link"></i></a>Tips and Pitfalls</h2>
-<p>Match types are powerful, but they come with some caveats:</p>
-<ol>
-<li><strong>Dependent typing mode</strong>: If your function’s return type isn’t directly a match type, the compiler may keep it abstract. Make sure your return type is shaped correctly.</li>
-<li><strong>Unchecked patterns</strong>: Due to type erasure, some runtime matches won’t work. Use <code>inline match</code> to resolve them at compile time.</li>
-<li><strong>Compiler stack space</strong>: Large recursive match types (e.g. on 200-element tuples) can blow the compiler’s stack. You may need to tune <code>-Xss</code>.</li>
-</ol>
-<p>The <a href="https://github.com/bishabosha/scaladays-2025">repo</a> has examples of these pitfalls and how to work around them.</p>
-<hr />
-<h2><a href="#conclusion" id="conclusion" class="anchor-link anchor-link__source"><i class="fa-solid fa-link"></i></a>Conclusion</h2>
-<p>Match types are one of the most exciting features in Scala 3. They let us:</p>
+<p>These are particularly efficient for implementing match types that compute over <strong>literal types</strong>,
+with operations for:</p>
 <ul>
-<li>Write APIs that feel as expressive as dynamic languages.</li>
-<li>Encode invariants in the type system.</li>
-<li>Push runtime checks into compile-time guarantees.</li>
+<li>Numerics</li>
+<li>Bit Manipulation</li>
+<li>Boolean logic</li>
+<li>String parsing</li>
+<li>Equality checking</li>
 </ul>
-<p>From type-safe routing, to refined types, to database queries and DataFrames, match types open up a whole new design space for Scala libraries.</p>
-<p>If you want to dive deeper, check out the <a href="https://github.com/bishabosha/scaladays-2025">ScalaDays 2025 demo repo</a>, or explore libraries like <a href="https://github.com/nvilla/regsafe">regsafe</a> and <a href="https://github.com/com-lihaoyi/scalasql">ScalaSQL</a>.</p>
-</div><div class="container mb-2"><div class="row"><div class="col d-flex"><small><a href="/articles/scalasql-simpletable.html"><i class="fa-solid fa-angle-left"></i> Making ScalaSql boring again (with interesting new internals)</a></small></div><div class="col d-flex flex-row-reverse"></div></div></div></article></div></div></div></div><footer class="mt-auto"><div class="footer-copyright text-center py-3"><small>© 2025 Jamie Thompson.<span class="text-muted"> Last published 25/Aug/2025</span></small></div></footer><script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script><script src="/static/js/nav-toc_59f8aa56504c2ecea884f7d87ca0a962.js" type="text/javascript"></script><script src="/static/js/sidebar-mobile_63c21c40d63ae89bd8880d2e1b3dc2c9.js" type="text/javascript"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/highlight.min.js" type="text/javascript"></script><script src="/static/js/hljs-scala3_868eb64187ff110dc72ccc6085774ee9.js" type="text/javascript"></script><script src="/static/js/hljs_a6372cedaa54e6ef1cd502062aef22a1.js" type="text/javascript"></script><script src="/static/js/katex-render_ea5696b3297f767be055588a9afda5ce.js" type="text/javascript"></script><script src="/static/js/admonition_70fb98d2c3c7311ff9783fd7412c7132.js" type="text/javascript"></script></body></html>
+<p>To use these in a match type, typically you would call one as the scrutinee of a match type, and match on the result. The following snippet is taken from the <a href="#type-safe-routing">Type Safe Routing</a> example:</p>
+<pre><code class="language-scala">type SearchChar[
+    C &lt;: Char,
+    Str &lt;: String,
+    Idx &lt;: Int
+] &lt;: Option[Int] =
+  (Length[Str] == Idx) match
+    case true  =&gt;
+      None.type
+    case false =&gt;
+      (CharAt[Str, Idx] == C) match
+        case true =&gt; Some[Idx]
+        case false =&gt; SearchChar[C, Str, S[Idx]]
+
+// usage: search for ':' in &quot;/hello/:user&quot;
+SearchChar[':', &quot;/hello/:user&quot;, 0] =:= Some[7]
+// usage: search for '?' in &quot;/hello/:user&quot;
+SearchChar['?', &quot;/hello/:user&quot;, 0] =:= None.type
+</code></pre>
+<hr />
+<p>Also particularly useful is the <code>NamedTuple.From</code> intrinsic type, which converts a case class type into a named tuple type:</p>
+<pre><code class="language-scala">case class Person(name: String, age: Int)
+
+NamedTuple.From[Person] =:= (name: String, age: Int)
+</code></pre>
+<p>These can be further modified with tuple match types from the standard library, such as <code>NamedTuple.Map</code>.</p>
+<hr />
+<h2><a href="#summary-and-remarks" id="summary-and-remarks" class="anchor-link anchor-link__source"><i class="fa-solid fa-link"></i></a>Summary and Remarks</h2>
+<p>I hope this article was useful for you to get a better understanding for how match types work in Scala 3.</p>
+<p>Again you can look at the demo repository <a href="https://github.com/bishabosha/scaladays-2025">here</a>, which contains full examples of match types, and also a benchmark comparing the performance with implicits.</p>
+</div><div class="container mb-2"><div class="row"><div class="col d-flex"><small><a href="/articles/scalasql-simpletable.html"><i class="fa-solid fa-angle-left"></i> Making ScalaSql boring again (with interesting new internals)</a></small></div><div class="col d-flex flex-row-reverse"></div></div></div></article></div></div></div></div><footer class="mt-auto"><div class="footer-copyright text-center py-3"><small>© 2025 Jamie Thompson.<span class="text-muted"> Last published 30/Aug/2025</span></small></div></footer><script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script><script src="/static/js/nav-toc_59f8aa56504c2ecea884f7d87ca0a962.js" type="text/javascript"></script><script src="/static/js/sidebar-mobile_63c21c40d63ae89bd8880d2e1b3dc2c9.js" type="text/javascript"></script><script src="/static/js/toc-collapse_53e0696ec44f972d1bb26303d9fc65b7.js" type="text/javascript"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/highlight.min.js" type="text/javascript"></script><script src="/static/js/hljs-scala3_868eb64187ff110dc72ccc6085774ee9.js" type="text/javascript"></script><script src="/static/js/hljs_a6372cedaa54e6ef1cd502062aef22a1.js" type="text/javascript"></script><script src="/static/js/katex-render_ea5696b3297f767be055588a9afda5ce.js" type="text/javascript"></script><script src="/static/js/admonition_70fb98d2c3c7311ff9783fd7412c7132.js" type="text/javascript"></script></body></html>
