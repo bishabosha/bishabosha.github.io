@@ -10,7 +10,7 @@
 <p>Here is the syntax: <code>T match { case P[x] =&gt; U }</code>, where <code>T</code> is the scrutinee type, <code>P[x]</code> is a pattern with a type parameter <code>x</code>, and <code>U</code> is the result type.</p>
 <p>You can use a match type on the right-hand side of a type alias, or type lambda, making them like a function at the type level.</p>
 <p>Let's begin with the identity match type: <code>type Id[T] = T match { case T =&gt; T }</code>:</p>
-<iframe src="/match-type-simulator/?embed=true&tab=match-types&example=Identity&stamp=19904a1cbb1" width="100%" height="275px"></iframe>
+<iframe src="/match-type-simulator/?embed=true&tab=match-types&example=Identity&stamp=19a89182732" width="100%" height="275px"></iframe>
 <p>Try to run the simulation with various Scala types as arguments (e.g. <code>String</code>, <code>List[Int]</code>, etc.)</p>
 <blockquote>
 <p>To assist with my presentation at ScalaDays 2025, I developed a <a href="/match-type-simulator/">match type simulator</a> to explain the rules of match types in a visual way, which you see above.</p>
@@ -63,12 +63,12 @@ the <code>VarLenses</code> class reads the structure of any case class (using <c
 <h2><a href="#the-rules" id="the-rules" class="anchor-link anchor-link__source"><i class="fa-solid fa-link"></i></a>The Rules</h2>
 <h3><a href="#subtype-checking" id="subtype-checking" class="anchor-link anchor-link__source"><i class="fa-solid fa-link"></i></a>Subtype Checking</h3>
 <p>The match type reducer works by checking if the scrutinee type (<code>T</code>) is a subtype of any of the pattern cases. If it is, then the case will match, and any wildcard type arguments will be instantiated before reducing to the right-hand side of the case.</p>
-<iframe src="/match-type-simulator/?embed=true&tab=match-types&example=Tuple+Unpack&stamp=19904a1cbb1" width="100%" height="330px"></iframe>
+<iframe src="/match-type-simulator/?embed=true&tab=match-types&example=Tuple+Unpack&stamp=19a89182732" width="100%" height="330px"></iframe>
 <p>In the example above, the <code>Tag[x]</code> and <code>Tag[y]</code> patterns will match both <code>ITag.type</code> and <code>STag.type</code> because they are both subtypes of the <code>Tag</code> class, and in the bindings you will see that the type argument <code>x</code> is instantiated to <code>Int</code> for <code>ITag.type</code> and <code>y</code> to <code>String</code> for <code>STag.type</code>.</p>
 <hr />
 <h3><a href="#disjointness-checking" id="disjointness-checking" class="anchor-link anchor-link__source"><i class="fa-solid fa-link"></i></a>Disjointness Checking</h3>
 <p>Ok, how about multiple patterns? The match type reducer attempts to check the scrutinee type against each pattern case <strong>in sequence</strong>. If the first pattern is <strong>not</strong> a subtype of the scrutinee, then the reducer will check the next pattern, and so on.</p>
-<iframe src="/match-type-simulator/?embed=true&tab=match-types&custom=true&name=Custom%20Match%20Type&invocation=Elem%5BFuture%5BInt%5D%5D&cases=case%20String%20%3D%3E%20Char%0Acase%20Seq%5Bx%5D%20%3D%3E%20x%0Acase%20Option%5Bx%5D%20%3D%3E%20x&th=86e712d2&showDisjointnessSteps=true&stamp=19904a1cbb1" width="100%" height="335px"></iframe>
+<iframe src="/match-type-simulator/?embed=true&tab=match-types&custom=true&name=Custom%20Match%20Type&invocation=Elem%5BFuture%5BInt%5D%5D&cases=case%20String%20%3D%3E%20Char%0Acase%20Seq%5Bx%5D%20%3D%3E%20x%0Acase%20Option%5Bx%5D%20%3D%3E%20x&th=86e712d2&showDisjointnessSteps=true&stamp=19a89182732" width="100%" height="335px"></iframe>
 <p>Working through the <code>Elem[Future[Int]]</code> example:</p>
 <ol>
 <li>First check that <code>Future[Int]</code> is a subtype of <code>String</code>.</li>
@@ -86,7 +86,7 @@ the <code>VarLenses</code> class reads the structure of any case class (using <c
 <hr />
 <h3><a href="#dependent-methods" id="dependent-methods" class="anchor-link anchor-link__source"><i class="fa-solid fa-link"></i></a>Dependent Methods</h3>
 <p>Why is the disjointness check important? It's because when a match type is used as the result type of a method, the typechecker uses a special dependent-typing mode, for example:</p>
-<iframe src="/match-type-simulator/?embed=true&tab=match-types&custom=true&name=Custom%20Match%20Type&invocation=Elem%5BFuture%5BInt%5D%5D&cases=case%20String%20%3D%3E%20Char%0Acase%20Seq%5Bx%5D%20%3D%3E%20x%0Acase%20Option%5Bx%5D%20%3D%3E%20x&th=86e712d2&showDependentMethod=true&hideTimeline=true&stamp=19904a1cbb1" width="100%" height="350px"></iframe>
+<iframe src="/match-type-simulator/?embed=true&tab=match-types&custom=true&name=Custom%20Match%20Type&invocation=Elem%5BFuture%5BInt%5D%5D&cases=case%20String%20%3D%3E%20Char%0Acase%20Seq%5Bx%5D%20%3D%3E%20x%0Acase%20Option%5Bx%5D%20%3D%3E%20x&th=86e712d2&showDependentMethod=true&hideTimeline=true&stamp=19a89182733" width="100%" height="350px"></iframe>
 <p>The rule for this mode is so rigid that the method can be mechanically generated from the match type's definition (try interacting with the pattern cases and see yourself 🤓).</p>
 <p>The method must take the shape of a pattern match, where each case is a <strong>typed pattern</strong> (i.e. where each pattern is identical to the corresponding pattern in the match type).</p>
 <p>What is special is that within the body of a case, the typechecker expects the same type as the body of the corresponding case in the match type.</p>
@@ -109,13 +109,13 @@ the <code>VarLenses</code> class reads the structure of any case class (using <c
 <blockquote>
 <p>Hint: try changing the types in any of the examples.</p>
 </blockquote>
-<iframe src="/match-type-simulator/?embed=true&tab=disjointness&example=Abstract+Type+vs+Concrete&stamp=19904a1cbb1" width="100%" height="180px"></iframe>
-<iframe src="/match-type-simulator/?embed=true&tab=disjointness&example=Two+Traits&stamp=19904a1cbb1" width="100%" height="200px"></iframe>
-<iframe src="/match-type-simulator/?embed=true&tab=disjointness&example=Trait+vs+Class&stamp=19904a1cbb1" width="100%" height="215px"></iframe>
-<iframe src="/match-type-simulator/?embed=true&tab=disjointness&example=Trait+vs+Final+Class&stamp=19904a1cbb1" width="100%" height="200px"></iframe>
-<iframe src="/match-type-simulator/?embed=true&tab=disjointness&example=Trait+vs+Object&stamp=19904a1cbb1" width="100%" height="180px"></iframe>
-<iframe src="/match-type-simulator/?embed=true&tab=disjointness&example=Sealed+Trait+vs+Class&stamp=19904a1cbb1" width="100%" height="200px"></iframe>
-<iframe src="/match-type-simulator/?embed=true&tab=disjointness&example=Two+Unrelated+Classes&stamp=19904a1cbb1" width="100%" height="180px"></iframe>
+<iframe src="/match-type-simulator/?embed=true&tab=disjointness&example=Abstract+Type+vs+Concrete&stamp=19a89182733" width="100%" height="180px"></iframe>
+<iframe src="/match-type-simulator/?embed=true&tab=disjointness&example=Two+Traits&stamp=19a89182733" width="100%" height="200px"></iframe>
+<iframe src="/match-type-simulator/?embed=true&tab=disjointness&example=Trait+vs+Class&stamp=19a89182733" width="100%" height="215px"></iframe>
+<iframe src="/match-type-simulator/?embed=true&tab=disjointness&example=Trait+vs+Final+Class&stamp=19a89182733" width="100%" height="200px"></iframe>
+<iframe src="/match-type-simulator/?embed=true&tab=disjointness&example=Trait+vs+Object&stamp=19a89182733" width="100%" height="180px"></iframe>
+<iframe src="/match-type-simulator/?embed=true&tab=disjointness&example=Sealed+Trait+vs+Class&stamp=19a89182733" width="100%" height="200px"></iframe>
+<iframe src="/match-type-simulator/?embed=true&tab=disjointness&example=Two+Unrelated+Classes&stamp=19a89182733" width="100%" height="180px"></iframe>
 <blockquote>
 <p>Hint: try changing the types in any of the examples above.</p>
 </blockquote>
@@ -123,7 +123,7 @@ the <code>VarLenses</code> class reads the structure of any case class (using <c
 <h3><a href="#recursive-match-types" id="recursive-match-types" class="anchor-link anchor-link__source"><i class="fa-solid fa-link"></i></a>Recursive Match Types</h3>
 <p>A last demonstration of the capabilities of match types is the ability to express recursive types.
 With recursion, you can compute true algorithms over types. For example, we can compute the last element of a tuple:</p>
-<iframe src="/match-type-simulator/?embed=true&tab=match-types&example=Last+Tuple+Element&stamp=19904a1cbb1" width="100%" height="360px"></iframe>
+<iframe src="/match-type-simulator/?embed=true&tab=match-types&example=Last+Tuple+Element&stamp=19a89182733" width="100%" height="360px"></iframe>
 <p>Recursion is the key to most useful match types - for example it is used in the <a href="#type-safe-routing">Type Safe Routing</a> example to traverse each character of a path string.</p>
 <hr />
 <h2><a href="#built-in-compile-time-operations" id="built-in-compile-time-operations" class="anchor-link anchor-link__source"><i class="fa-solid fa-link"></i></a>Built-in Compile-Time Operations</h2>
@@ -179,4 +179,4 @@ NamedTuple.From[Person] =:= (name: String, age: Int)
 <h2><a href="#summary-and-remarks" id="summary-and-remarks" class="anchor-link anchor-link__source"><i class="fa-solid fa-link"></i></a>Summary and Remarks</h2>
 <p>I hope this article was useful for you to get a better understanding for how match types work in Scala 3.</p>
 <p>Again you can look at the demo repository <a href="https://github.com/bishabosha/scaladays-2025">here</a>, which contains full examples of match types, and also a benchmark comparing the performance with implicits.</p>
-</div><div class="container mb-2"><div class="row"><div class="col d-flex"><small><a href="/articles/scalasql-simpletable.html"><i class="fa-solid fa-angle-left"></i> Making ScalaSql boring again (with interesting new internals)</a></small></div><div class="col d-flex flex-row-reverse"></div></div></div></article></div></div></div></div><footer class="mt-auto"><div class="footer-copyright text-center py-3"><small>© 2025 Jamie Thompson.<span class="text-muted"> Last published 01/Sept/2025</span></small></div></footer><script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script><script src="/static/js/nav-toc_59f8aa56504c2ecea884f7d87ca0a962.js" type="text/javascript"></script><script src="/static/js/sidebar-mobile_63c21c40d63ae89bd8880d2e1b3dc2c9.js" type="text/javascript"></script><script src="/static/js/toc-collapse_53e0696ec44f972d1bb26303d9fc65b7.js" type="text/javascript"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/highlight.min.js" type="text/javascript"></script><script src="/static/js/hljs-scala3_868eb64187ff110dc72ccc6085774ee9.js" type="text/javascript"></script><script src="/static/js/hljs_a6372cedaa54e6ef1cd502062aef22a1.js" type="text/javascript"></script><script src="/static/js/katex-render_ea5696b3297f767be055588a9afda5ce.js" type="text/javascript"></script><script src="/static/js/admonition_70fb98d2c3c7311ff9783fd7412c7132.js" type="text/javascript"></script></body></html>
+</div><div class="container mb-2"><div class="row"><div class="col d-flex"><small><a href="/articles/scalasql-simpletable.html"><i class="fa-solid fa-angle-left"></i> Making ScalaSql boring again (with interesting new internals)</a></small></div><div class="col d-flex flex-row-reverse"></div></div></div></article></div></div></div></div><footer class="mt-auto"><div class="footer-copyright text-center py-3"><small>© 2025 Jamie Thompson.<span class="text-muted"> Last published 15/Nov/2025</span></small></div></footer><script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script><script src="/static/js/nav-toc_59f8aa56504c2ecea884f7d87ca0a962.js" type="text/javascript"></script><script src="/static/js/sidebar-mobile_63c21c40d63ae89bd8880d2e1b3dc2c9.js" type="text/javascript"></script><script src="/static/js/toc-collapse_53e0696ec44f972d1bb26303d9fc65b7.js" type="text/javascript"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.1/highlight.min.js" type="text/javascript"></script><script src="/static/js/hljs-scala3_868eb64187ff110dc72ccc6085774ee9.js" type="text/javascript"></script><script src="/static/js/hljs_a6372cedaa54e6ef1cd502062aef22a1.js" type="text/javascript"></script><script src="/static/js/katex-render_ea5696b3297f767be055588a9afda5ce.js" type="text/javascript"></script><script src="/static/js/admonition_70fb98d2c3c7311ff9783fd7412c7132.js" type="text/javascript"></script></body></html>
