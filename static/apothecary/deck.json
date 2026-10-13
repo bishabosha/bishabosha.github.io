@@ -1,0 +1,305 @@
+{
+  "title": "The Apothecary: a Laminar lab",
+  "author": "Jamie Thompson",
+  "event": "ScalaDays 2026",
+  "mainSlides": 35,
+  "totalSeconds": 7200,
+  "slides": [
+    {
+      "id": "title",
+      "title": "The Apothecary",
+      "seconds": 60,
+      "startSeconds": 0,
+      "appendix": false,
+      "source": "content/apothecary/slides/000 - title.md"
+    },
+    {
+      "id": "welcome",
+      "title": "Welcome, apprentice",
+      "seconds": 90,
+      "startSeconds": 60,
+      "appendix": false,
+      "source": "content/apothecary/slides/010 - welcome.md"
+    },
+    {
+      "id": "agenda",
+      "title": "The recipe",
+      "seconds": 60,
+      "startSeconds": 150,
+      "appendix": false,
+      "source": "content/apothecary/slides/020 - agenda.md"
+    },
+    {
+      "id": "setup",
+      "title": "Setup, step by step",
+      "seconds": 240,
+      "startSeconds": 210,
+      "appendix": false,
+      "source": "content/apothecary/slides/030 - setup.md"
+    },
+    {
+      "id": "workflow",
+      "title": "How the exercises work",
+      "seconds": 60,
+      "startSeconds": 450,
+      "appendix": false,
+      "source": "content/apothecary/slides/035 - workflow.md"
+    },
+    {
+      "id": "the-shop",
+      "title": "The shop",
+      "seconds": 90,
+      "startSeconds": 510,
+      "appendix": false,
+      "source": "content/apothecary/slides/040 - the-shop.md"
+    },
+    {
+      "id": "basics",
+      "title": "1 · Reactive basics",
+      "seconds": 15,
+      "startSeconds": 600,
+      "appendix": false,
+      "source": "content/apothecary/slides/100 - basics.md"
+    },
+    {
+      "id": "var-signal-stream",
+      "title": "Three ingredients",
+      "seconds": 180,
+      "startSeconds": 615,
+      "appendix": false,
+      "source": "content/apothecary/slides/110 - var-signal-stream.md"
+    },
+    {
+      "id": "arrows",
+      "title": "Pointing the arrows",
+      "seconds": 150,
+      "startSeconds": 795,
+      "appendix": false,
+      "source": "content/apothecary/slides/120 - arrows.md"
+    },
+    {
+      "id": "ownership",
+      "title": "Who owns the bubbles?",
+      "seconds": 120,
+      "startSeconds": 945,
+      "appendix": false,
+      "source": "content/apothecary/slides/130 - ownership.md"
+    },
+    {
+      "id": "exercise-cauldron",
+      "title": "Exercise 1 · The cauldron",
+      "seconds": 600,
+      "startSeconds": 1065,
+      "appendix": false,
+      "source": "content/apothecary/slides/140 - exercise-cauldron.md"
+    },
+    {
+      "id": "forms",
+      "title": "2 · Forms & validation",
+      "seconds": 15,
+      "startSeconds": 1665,
+      "appendix": false,
+      "source": "content/apothecary/slides/200 - forms.md"
+    },
+    {
+      "id": "controlled",
+      "title": "Controlled inputs",
+      "seconds": 150,
+      "startSeconds": 1680,
+      "appendix": false,
+      "source": "content/apothecary/slides/210 - controlled.md"
+    },
+    {
+      "id": "lenses",
+      "title": "Less copy, more potion",
+      "seconds": 150,
+      "startSeconds": 1830,
+      "appendix": false,
+      "source": "content/apothecary/slides/220 - lenses.md"
+    },
+    {
+      "id": "validation",
+      "title": "Validation is just a Signal",
+      "seconds": 180,
+      "startSeconds": 1980,
+      "appendix": false,
+      "source": "content/apothecary/slides/230 - validation.md"
+    },
+    {
+      "id": "touched",
+      "title": "Don't shout before they've typed",
+      "seconds": 150,
+      "startSeconds": 2160,
+      "appendix": false,
+      "source": "content/apothecary/slides/240 - touched.md"
+    },
+    {
+      "id": "exercise-form",
+      "title": "Exercise 2 · Register a potion",
+      "seconds": 900,
+      "startSeconds": 2310,
+      "appendix": false,
+      "source": "content/apothecary/slides/250 - exercise-form.md"
+    },
+    {
+      "id": "async",
+      "title": "3 · Async & the backend",
+      "seconds": 15,
+      "startSeconds": 3210,
+      "appendix": false,
+      "source": "content/apothecary/slides/300 - async.md"
+    },
+    {
+      "id": "the-oracle",
+      "title": "The oracle",
+      "seconds": 120,
+      "startSeconds": 3225,
+      "appendix": false,
+      "source": "content/apothecary/slides/310 - the-oracle.md"
+    },
+    {
+      "id": "switch",
+      "title": "Typing faster than the oracle",
+      "seconds": 180,
+      "startSeconds": 3345,
+      "appendix": false,
+      "source": "content/apothecary/slides/320 - switch.md"
+    },
+    {
+      "id": "remote-state",
+      "title": "Loading, ready, or rude",
+      "seconds": 150,
+      "startSeconds": 3525,
+      "appendix": false,
+      "source": "content/apothecary/slides/330 - remote-state.md"
+    },
+    {
+      "id": "split",
+      "title": "Touch only what changed",
+      "seconds": 180,
+      "startSeconds": 3675,
+      "appendix": false,
+      "source": "content/apothecary/slides/340 - split.md"
+    },
+    {
+      "id": "exercise-cellar",
+      "title": "Exercise 3 · The cellar",
+      "seconds": 720,
+      "startSeconds": 3855,
+      "appendix": false,
+      "source": "content/apothecary/slides/350 - exercise-cellar.md"
+    },
+    {
+      "id": "organisation",
+      "title": "4 · Organisation & interop",
+      "seconds": 15,
+      "startSeconds": 4575,
+      "appendix": false,
+      "source": "content/apothecary/slides/400 - organisation.md"
+    },
+    {
+      "id": "components",
+      "title": "A component is a function",
+      "seconds": 150,
+      "startSeconds": 4590,
+      "appendix": false,
+      "source": "content/apothecary/slides/410 - components.md"
+    },
+    {
+      "id": "errors",
+      "title": "Errors you can see",
+      "seconds": 90,
+      "startSeconds": 4740,
+      "appendix": false,
+      "source": "content/apothecary/slides/420 - errors.md"
+    },
+    {
+      "id": "interop",
+      "title": "Borrowing from JavaScript",
+      "seconds": 120,
+      "startSeconds": 4830,
+      "appendix": false,
+      "source": "content/apothecary/slides/430 - interop.md"
+    },
+    {
+      "id": "exercise-brew",
+      "title": "Exercise 4 · Celebrate a brew",
+      "seconds": 300,
+      "startSeconds": 4950,
+      "appendix": false,
+      "source": "content/apothecary/slides/440 - exercise-brew.md"
+    },
+    {
+      "id": "capstone",
+      "title": "Capstone · notebook.sc widgets",
+      "seconds": 15,
+      "startSeconds": 5250,
+      "appendix": false,
+      "source": "content/apothecary/slides/500 - capstone.md"
+    },
+    {
+      "id": "notebook-tour",
+      "title": "notebook.sc in 3 minutes",
+      "seconds": 180,
+      "startSeconds": 5265,
+      "appendix": false,
+      "source": "content/apothecary/slides/510 - notebook-tour.md"
+    },
+    {
+      "id": "plugin-contract",
+      "title": "The plugin contract",
+      "seconds": 180,
+      "startSeconds": 5445,
+      "appendix": false,
+      "source": "content/apothecary/slides/520 - plugin-contract.md"
+    },
+    {
+      "id": "capstone-options",
+      "title": "Choose your potion",
+      "seconds": 120,
+      "startSeconds": 5625,
+      "appendix": false,
+      "source": "content/apothecary/slides/530 - capstone-options.md"
+    },
+    {
+      "id": "capstone-build",
+      "title": "Brewing time",
+      "seconds": 1260,
+      "startSeconds": 5745,
+      "appendix": false,
+      "source": "content/apothecary/slides/540 - capstone-build.md"
+    },
+    {
+      "id": "recap",
+      "title": "What we brewed",
+      "seconds": 135,
+      "startSeconds": 7005,
+      "appendix": false,
+      "source": "content/apothecary/slides/600 - recap.md"
+    },
+    {
+      "id": "thanks",
+      "title": "Thank you",
+      "seconds": 60,
+      "startSeconds": 7140,
+      "appendix": false,
+      "source": "content/apothecary/slides/610 - thanks.md"
+    },
+    {
+      "id": "appendix-real-server",
+      "title": "Appendix · A real oracle",
+      "seconds": 0,
+      "startSeconds": 7200,
+      "appendix": true,
+      "source": "content/apothecary/slides/900 - appendix-real-server.md"
+    },
+    {
+      "id": "appendix-cheatsheet",
+      "title": "Appendix · Cheat sheet",
+      "seconds": 0,
+      "startSeconds": 7200,
+      "appendix": true,
+      "source": "content/apothecary/slides/910 - appendix-cheatsheet.md"
+    }
+  ]
+}
