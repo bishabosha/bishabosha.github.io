@@ -171,10 +171,19 @@ function enableZoom(enabled) {
 }
 async function prepareViewer() {
   libraries ??= (async () => {
+    const stylesheet = document.createElement('link');
+    stylesheet.rel = 'stylesheet';
+    stylesheet.href = new URL('pdf_viewer.css', base).href;
+    const styled = new Promise((resolve, reject) => {
+      stylesheet.onload = resolve;
+      stylesheet.onerror = () => reject(new Error('Could not load PDF viewer styles.'));
+    });
+    document.head.append(stylesheet);
     const core = await import(new URL('pdf.mjs', base));
     globalThis.pdfjsLib = core; // Required by PDF.js's standalone viewer module.
     core.GlobalWorkerOptions.workerSrc = new URL('pdf.worker.mjs', base).href;
     const ui = await import(new URL('pdf_viewer.mjs', base));
+    await styled;
     return { core, ui };
   })();
   const { core, ui } = await libraries;

@@ -297,7 +297,7 @@ export function installCodeAnnotations(reveal) {
     render(slides);
   };
   const schedule = slides => {
-    slides.forEach(slide => pending.add(slide));
+    slides.filter(Boolean).forEach(slide => pending.add(slide));
     if (!frame) frame = requestAnimationFrame(flush);
   };
   // Reveal wraps sections in .pdf-page when preparing a print layout.
@@ -312,7 +312,11 @@ export function installCodeAnnotations(reveal) {
   fitting.observe(container, { subtree: true, attributes: true, attributeFilter: ['style', 'data-fitted'] });
   // Fragment steps use premeasured note sizes; never measure or refit the slide.
   for (const event of ['fragmentshown', 'fragmenthidden', 'slidechanged']) {
-    reveal.on(event, () => syncAnnotationVisibility(reveal.getCurrentSlide()));
+    reveal.on(event, () => {
+      const slide = reveal.getCurrentSlide();
+      if (event === 'slidechanged') schedule([slide]);
+      syncAnnotationVisibility(slide);
+    });
   }
   for (const event of ['overviewshown', 'overviewhidden']) {
     reveal.on(event, () => all().forEach(slide => syncAnnotationVisibility(slide)));
@@ -322,14 +326,16 @@ export function installCodeAnnotations(reveal) {
     const changed = new Set(event.detail.changedIds);
     render(all().filter(slide => event.detail.stylesChanged || changed.has(slide.id)));
   }, true);
-  document.fonts.addEventListener('loadingdone', () => schedule(all()));
+  document.fonts.addEventListener('loadingdone', () => schedule([reveal.getCurrentSlide()]));
+  document.addEventListener('code:highlighted', event => schedule(event.detail.slides));
   reveal.on('pdf-ready', () => schedule(all()));
   window.addEventListener('beforeprint', () => {
     render(all());
     all().forEach(slide => syncAnnotationVisibility(slide, true));
   });
   window.addEventListener('afterprint', () => all().forEach(slide => syncAnnotationVisibility(slide)));
-  const ready = () => document.fonts.ready.then(() => schedule(all()));
+  const ready = () => document.fonts.ready.then(() => schedule(
+    new URLSearchParams(location.search).has('print-pdf') ? all() : [reveal.getCurrentSlide()]));
   if (reveal.isReady()) ready(); else reveal.on('ready', ready);
 }
 

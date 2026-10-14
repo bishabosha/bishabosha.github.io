@@ -5,16 +5,21 @@ export function installNotebookEmbeds(root = document) {
     const link = host.querySelector('a');
     if (!link || host.querySelector('iframe, .notebook-print-preview')) continue;
     const preview = document.createElement('img');
-    preview.src = new URL('preview.png', link.href).href;
+    preview.dataset.src = new URL('preview.png', link.href).href;
     preview.alt = 'Saved view of the dataframe notebook';
     preview.className = 'notebook-print-preview';
     // Print fitting clones slides; never start a live kernel/frame in those copies.
     if (print) {
+      preview.src = preview.dataset.src;
+      delete preview.dataset.src;
       preview.style.display = 'block';
       host.replaceChildren(preview);
     } else {
       const frame = document.createElement('iframe');
-      frame.src = link.href;
+      frame.dataset.src = link.href;
+      // Reveal activates data-src frames when their slide is entered. Handle
+      // the current slide too when installing after Reveal has initialized.
+      if (host.closest('section')?.classList.contains('present')) frame.src = link.href;
       frame.title = 'Interactive Scala dataframe notebook';
       host.replaceChildren(frame, preview);
     }
